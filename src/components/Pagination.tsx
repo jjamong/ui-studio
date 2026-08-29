@@ -15,7 +15,7 @@ export interface PaginationProps {
 }
 
 const navButtonClass =
-  'flex h-7 w-7 items-center justify-center rounded-md text-[var(--ds-text-subtle)] transition-colors hover:bg-[var(--ds-background-neutral-hovered)] hover:text-[var(--ds-text)] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent'
+  'flex h-7 w-7 items-center justify-center rounded text-[var(--ds-text-subtle)] transition-colors hover:bg-[var(--ds-background-neutral-hovered)] hover:text-[var(--ds-text)] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent'
 
 type PageToken = number | 'ellipsis'
 
@@ -95,7 +95,7 @@ export function Pagination({
               type="button"
               onClick={() => onPageChange(token)}
               className={clsx(
-                'flex h-7 w-7 items-center justify-center rounded-md text-xs font-semibold transition-colors',
+                'flex h-7 w-7 items-center justify-center rounded text-xs font-semibold transition-colors',
                 token === currentPage
                   ? 'bg-[var(--ds-background-brand-bold)] text-[var(--ds-text-inverse)]'
                   : 'text-[var(--ds-text)] hover:bg-[var(--ds-background-neutral-hovered)]',
@@ -139,7 +139,7 @@ export function Pagination({
               onKeyDown={handleJumpKeyDown}
               onBlur={commitJump}
               placeholder={String(currentPage)}
-              className="h-7 w-12 rounded-md border border-[var(--ds-border)] bg-[var(--ds-surface)] px-1.5 text-center text-xs text-[var(--ds-text)] outline-none focus:border-[var(--ds-border-focused)]"
+              className="h-7 w-12 rounded border border-[var(--ds-border)] bg-[var(--ds-surface)] px-1.5 text-center text-xs text-[var(--ds-text)] outline-none focus:border-[var(--ds-border-focused)]"
             />
           </div>
         )}
@@ -149,7 +149,7 @@ export function Pagination({
             <select
               value={itemsPerPage}
               onChange={(e) => onItemsPerPageChange(Number(e.target.value))}
-              className="h-7 appearance-none rounded-md border border-[var(--ds-border)] bg-[var(--ds-surface)] py-1 pl-2.5 pr-7 text-2xs font-semibold text-[var(--ds-text)] outline-none focus:border-[var(--ds-border-focused)]"
+              className="h-7 appearance-none rounded border border-[var(--ds-border)] bg-[var(--ds-surface)] py-1 pl-2.5 pr-7 text-2xs font-semibold text-[var(--ds-text)] outline-none focus:border-[var(--ds-border-focused)]"
             >
               {itemsPerPageOptions.map((opt) => (
                 <option key={opt} value={opt}>

@@ -24,9 +24,9 @@ const variantClass: Record<ButtonVariant, string> = {
 }
 
 const sizeClass: Record<ButtonSize, string> = {
-  sm: 'h-8 px-2.5 text-xs gap-1',
-  md: 'h-9 px-3 text-sm gap-1.5',
-  lg: 'h-10 px-4 text-base gap-2',
+  sm: 'h-6 px-2 text-xs gap-1',
+  md: 'h-8 px-3 text-sm gap-1.5',
+  lg: 'h-9 px-3.5 text-base gap-2',
 }
 
 const spinnerSizeClass: Record<ButtonSize, string> = {
@@ -44,7 +44,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         type={type}
         disabled={disabled || loading}
         className={clsx(
-          'inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-md font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60',
+          'inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60',
           variantClass[variant],
           sizeClass[size],
           className,

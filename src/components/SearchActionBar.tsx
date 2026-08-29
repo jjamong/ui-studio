@@ -55,7 +55,7 @@ export function SearchActionBar({
   }
 
   return (
-    <div className="flex flex-col gap-3 rounded-xl border border-[var(--ds-border)] bg-[var(--ds-surface)] p-3 md:flex-row md:items-center md:justify-between">
+    <div className="flex flex-col gap-3 rounded border border-[var(--ds-border)] bg-[var(--ds-surface)] p-3 md:flex-row md:items-center md:justify-between">
       <div className="flex flex-1 flex-col items-stretch gap-2 sm:flex-row sm:items-center">
         {filters.map((filter) => (
           <div key={filter.key} className={filter.widthClass ?? 'w-full sm:w-40'}>
@@ -77,7 +77,7 @@ export function SearchActionBar({
               placeholder={searchPlaceholder}
               onChange={(e) => setTempSearch(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
-              className="h-9 w-full rounded-md border border-[var(--ds-border)] bg-[var(--ds-surface-sunken)] pl-8 pr-3 text-sm text-[var(--ds-text)] outline-none focus:border-[var(--ds-border-focused)] focus:bg-[var(--ds-surface)]"
+              className="h-8 w-full rounded border border-[var(--ds-border)] bg-[var(--ds-surface-sunken)] pl-8 pr-3 text-sm text-[var(--ds-text)] outline-none focus:border-[var(--ds-border-focused)] focus:bg-[var(--ds-surface)]"
             />
           </div>
           <Button onClick={handleSubmit}>조회</Button>

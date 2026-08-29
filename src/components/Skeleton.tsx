@@ -12,7 +12,7 @@ export interface SkeletonProps {
 export function Skeleton({ variant = 'text', width, height, className }: SkeletonProps) {
   const variantClass = {
     circle: 'rounded-full',
-    rect: 'rounded-md',
+    rect: 'rounded',
     text: 'h-3 rounded',
   }[variant]
 

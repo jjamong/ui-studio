@@ -33,14 +33,14 @@ export function Modal({ open, onClose, title, children, footer }: ModalProps) {
         if (e.target === e.currentTarget) onClose()
       }}
     >
-      <div className="flex max-h-[85vh] w-full max-w-lg flex-col overflow-hidden rounded-xl border border-[var(--ds-border)] bg-[var(--ds-surface-overlay)] shadow-[var(--ds-shadow-overlay)]">
+      <div className="flex max-h-[85vh] w-full max-w-lg flex-col overflow-hidden rounded border border-[var(--ds-border)] bg-[var(--ds-surface-overlay)] shadow-[var(--ds-shadow-overlay)]">
         <div className="flex items-center justify-between border-b border-[var(--ds-border)] px-5 py-4">
           <h2 className="text-base font-bold text-[var(--ds-text)]">{title}</h2>
           <button
             type="button"
             onClick={onClose}
             aria-label="닫기"
-            className="flex h-8 w-8 items-center justify-center rounded-md text-[var(--ds-text-subtle)] hover:bg-[var(--ds-background-neutral-hovered)] hover:text-[var(--ds-text)]"
+            className="flex h-8 w-8 items-center justify-center rounded text-[var(--ds-text-subtle)] hover:bg-[var(--ds-background-neutral-hovered)] hover:text-[var(--ds-text)]"
           >
             <X size={16} />
           </button>
