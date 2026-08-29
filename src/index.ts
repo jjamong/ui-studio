@@ -25,6 +25,12 @@ export type { RadioProps, RadioGroupProps, RadioOption } from './components/Radi
 export { Breadcrumb } from './components/Breadcrumb'
 export type { BreadcrumbProps, BreadcrumbItem } from './components/Breadcrumb'
 
+export { Tree, findTreeNode, collectTreeNodeIds } from './components/Tree'
+export type { TreeProps, TreeNode, TreeMode, TreeSize } from './components/Tree'
+
+export { DraggableTree } from './components/DraggableTree'
+export type { DraggableTreeProps, DropPosition } from './components/DraggableTree'
+
 export { Skeleton } from './components/Skeleton'
 export type { SkeletonProps } from './components/Skeleton'
 
