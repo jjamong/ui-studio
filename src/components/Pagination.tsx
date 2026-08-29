@@ -1,4 +1,5 @@
-import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react'
+import { clsx } from 'clsx'
 
 export interface PaginationProps {
   currentPage: number
@@ -12,7 +13,24 @@ export interface PaginationProps {
 const navButtonClass =
   'flex h-7 w-7 items-center justify-center rounded-md text-[var(--ds-text-subtle)] transition-colors hover:bg-[var(--ds-background-neutral-hovered)] hover:text-[var(--ds-text)] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent'
 
-/** 그리드/목록 하단 공용 페이지네이션. 좌측 이전/다음 화살표 + 현재 페이지, 우측 페이지당 표시 개수 선택. */
+type PageToken = number | 'ellipsis'
+
+/** 현재 페이지 주변(±1)과 첫/마지막 페이지만 남기고 나머지는 '...'으로 접는다. */
+function buildPageTokens(currentPage: number, totalPages: number): PageToken[] {
+  const pages = Array.from(
+    new Set([1, currentPage - 1, currentPage, currentPage + 1, totalPages].filter((p) => p >= 1 && p <= totalPages)),
+  ).sort((a, b) => a - b)
+
+  const tokens: PageToken[] = []
+  pages.forEach((page, idx) => {
+    const prev = pages[idx - 1]
+    if (idx > 0 && prev !== undefined && page - prev > 1) tokens.push('ellipsis')
+    tokens.push(page)
+  })
+  return tokens
+}
+
+/** 그리드/목록 하단 공용 페이지네이션. 처음/이전/페이지번호(생략 포함)/다음/마지막 + 우측 페이지당 표시 개수 선택. */
 export function Pagination({
   currentPage,
   totalPages,
@@ -23,9 +41,20 @@ export function Pagination({
 }: PaginationProps) {
   if (totalPages <= 1 && !onItemsPerPageChange) return null
 
+  const tokens = buildPageTokens(currentPage, totalPages)
+
   return (
     <div className="flex items-center justify-between gap-3 py-3">
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-0.5">
+        <button
+          type="button"
+          onClick={() => onPageChange(1)}
+          disabled={currentPage === 1}
+          aria-label="처음 페이지로"
+          className={navButtonClass}
+        >
+          <ChevronsLeft size={14} />
+        </button>
         <button
           type="button"
           onClick={() => onPageChange(currentPage - 1)}
@@ -35,9 +64,29 @@ export function Pagination({
         >
           <ChevronLeft size={14} />
         </button>
-        <span className="flex h-7 min-w-7 items-center justify-center rounded-md bg-[var(--ds-background-neutral)] px-2 text-xs font-semibold text-[var(--ds-text)]">
-          {currentPage}
-        </span>
+
+        {tokens.map((token, idx) =>
+          token === 'ellipsis' ? (
+            <span key={`ellipsis-${idx}`} className="flex h-7 w-7 items-center justify-center text-xs text-[var(--ds-text-subtle)]">
+              ...
+            </span>
+          ) : (
+            <button
+              key={token}
+              type="button"
+              onClick={() => onPageChange(token)}
+              className={clsx(
+                'flex h-7 w-7 items-center justify-center rounded-md text-xs font-semibold transition-colors',
+                token === currentPage
+                  ? 'bg-[var(--ds-background-brand-bold)] text-[var(--ds-text-inverse)]'
+                  : 'text-[var(--ds-text)] hover:bg-[var(--ds-background-neutral-hovered)]',
+              )}
+            >
+              {token}
+            </button>
+          ),
+        )}
+
         <button
           type="button"
           onClick={() => onPageChange(currentPage + 1)}
@@ -46,6 +95,15 @@ export function Pagination({
           className={navButtonClass}
         >
           <ChevronRight size={14} />
+        </button>
+        <button
+          type="button"
+          onClick={() => onPageChange(totalPages)}
+          disabled={currentPage === totalPages}
+          aria-label="마지막 페이지로"
+          className={navButtonClass}
+        >
+          <ChevronsRight size={14} />
         </button>
       </div>
 
