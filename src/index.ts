@@ -16,6 +16,15 @@ export type { TextAreaProps } from './components/TextArea'
 export { Switch } from './components/Switch'
 export type { SwitchProps } from './components/Switch'
 
+export { Checkbox } from './components/Checkbox'
+export type { CheckboxProps } from './components/Checkbox'
+
+export { Radio, RadioGroup } from './components/Radio'
+export type { RadioProps, RadioGroupProps, RadioOption } from './components/Radio'
+
+export { Breadcrumb } from './components/Breadcrumb'
+export type { BreadcrumbProps, BreadcrumbItem } from './components/Breadcrumb'
+
 export { Skeleton } from './components/Skeleton'
 export type { SkeletonProps } from './components/Skeleton'
 

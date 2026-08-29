@@ -1,3 +1,5 @@
+import { useState } from 'react'
+import type { KeyboardEvent } from 'react'
 import { ChevronDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react'
 import { clsx } from 'clsx'
 
@@ -8,6 +10,8 @@ export interface PaginationProps {
   itemsPerPage?: number
   onItemsPerPageChange?: (size: number) => void
   itemsPerPageOptions?: number[]
+  /** 페이지 번호를 직접 입력해 이동하는 입력창을 표시할지 여부. */
+  showQuickJumper?: boolean
 }
 
 const navButtonClass =
@@ -38,10 +42,25 @@ export function Pagination({
   itemsPerPage,
   onItemsPerPageChange,
   itemsPerPageOptions = [10, 20, 50],
+  showQuickJumper = false,
 }: PaginationProps) {
+  const [jumpValue, setJumpValue] = useState('')
+
   if (totalPages <= 1 && !onItemsPerPageChange) return null
 
   const tokens = buildPageTokens(currentPage, totalPages)
+
+  function commitJump() {
+    const page = Number(jumpValue)
+    if (Number.isInteger(page) && page >= 1 && page <= totalPages) {
+      onPageChange(page)
+    }
+    setJumpValue('')
+  }
+
+  function handleJumpKeyDown(e: KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter') commitJump()
+  }
 
   return (
     <div className="flex items-center justify-between gap-3 py-3">
@@ -107,25 +126,44 @@ export function Pagination({
         </button>
       </div>
 
-      {onItemsPerPageChange && itemsPerPage !== undefined && (
-        <div className="relative">
-          <select
-            value={itemsPerPage}
-            onChange={(e) => onItemsPerPageChange(Number(e.target.value))}
-            className="h-7 appearance-none rounded-md border border-[var(--ds-border)] bg-[var(--ds-surface)] py-1 pl-2.5 pr-7 text-2xs font-semibold text-[var(--ds-text)] outline-none focus:border-[var(--ds-border-focused)]"
-          >
-            {itemsPerPageOptions.map((opt) => (
-              <option key={opt} value={opt}>
-                {opt} / page
-              </option>
-            ))}
-          </select>
-          <ChevronDown
-            size={12}
-            className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[var(--ds-text-subtle)]"
-          />
-        </div>
-      )}
+      <div className="flex items-center gap-3">
+        {showQuickJumper && totalPages > 1 && (
+          <div className="flex items-center gap-1.5 text-xs text-[var(--ds-text-subtle)]">
+            이동
+            <input
+              type="number"
+              min={1}
+              max={totalPages}
+              value={jumpValue}
+              onChange={(e) => setJumpValue(e.target.value)}
+              onKeyDown={handleJumpKeyDown}
+              onBlur={commitJump}
+              placeholder={String(currentPage)}
+              className="h-7 w-12 rounded-md border border-[var(--ds-border)] bg-[var(--ds-surface)] px-1.5 text-center text-xs text-[var(--ds-text)] outline-none focus:border-[var(--ds-border-focused)]"
+            />
+          </div>
+        )}
+
+        {onItemsPerPageChange && itemsPerPage !== undefined && (
+          <div className="relative">
+            <select
+              value={itemsPerPage}
+              onChange={(e) => onItemsPerPageChange(Number(e.target.value))}
+              className="h-7 appearance-none rounded-md border border-[var(--ds-border)] bg-[var(--ds-surface)] py-1 pl-2.5 pr-7 text-2xs font-semibold text-[var(--ds-text)] outline-none focus:border-[var(--ds-border-focused)]"
+            >
+              {itemsPerPageOptions.map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt} / page
+                </option>
+              ))}
+            </select>
+            <ChevronDown
+              size={12}
+              className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[var(--ds-text-subtle)]"
+            />
+          </div>
+        )}
+      </div>
     </div>
   )
 }
