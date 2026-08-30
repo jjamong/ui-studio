@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import type { ReactNode } from 'react'
 import {
   DndContext,
   DragOverlay,
@@ -9,7 +10,7 @@ import {
   useSensors,
 } from '@dnd-kit/core'
 import type { DragEndEvent, DragOverEvent, DragStartEvent } from '@dnd-kit/core'
-import { ChevronRight, File as FileIcon, Folder, FolderOpen, GripVertical } from 'lucide-react'
+import { ChevronRight, File as FileIcon, Folder, FolderOpen } from 'lucide-react'
 import { clsx } from 'clsx'
 import type { TreeNode, TreeSize } from './Tree'
 
@@ -26,6 +27,12 @@ export interface DraggableTreeProps {
    * (예: draggedId를 targetId의 형제/자식으로 옮긴 새 배열을 만들어 다시 렌더링).
    */
   onMove: (draggedId: string, targetId: string, position: DropPosition) => void
+  /**
+   * 지정하면 각 행 끝에 이 함수가 반환하는 내용을 추가로 렌더링한다(액션 버튼/메뉴 등 —
+   * DraggableTree는 내용을 모르는 순수 확장 지점). 행 전체가 드래그 핸들이므로 이 슬롯은
+   * 드래그와 무관하며, 클릭이 행 선택으로 전파되지 않게 자체적으로 stopPropagation된다.
+   */
+  renderRowEnd?: (node: TreeNode, hasChildren: boolean) => ReactNode
 }
 
 interface DropIndicator {
@@ -59,6 +66,7 @@ function DraggableRow({
   dropIndicator,
   onToggleExpand,
   onSelectNode,
+  renderRowEnd,
 }: {
   node: TreeNode
   depth: number
@@ -69,6 +77,7 @@ function DraggableRow({
   dropIndicator: DropIndicator | null
   onToggleExpand: (id: string) => void
   onSelectNode: (node: TreeNode) => void
+  renderRowEnd?: (node: TreeNode, hasChildren: boolean) => ReactNode
 }) {
   const { attributes, listeners, setNodeRef: setDragRef, isDragging } = useDraggable({
     id: node.id,
@@ -89,10 +98,12 @@ function DraggableRow({
           setDragRef(el)
           setDropRef(el)
         }}
+        {...(node.disabled ? {} : attributes)}
+        {...(node.disabled ? {} : listeners)}
         className={clsx(
           'flex items-center gap-1 rounded pr-2 transition-colors',
           rowHeightClass[size],
-          node.disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:bg-[var(--ds-background-neutral-hovered)]',
+          node.disabled ? 'cursor-not-allowed opacity-50' : 'cursor-grab hover:bg-[var(--ds-background-neutral-hovered)] active:cursor-grabbing',
           isSelected && 'bg-[var(--ds-background-selected)] font-semibold text-[var(--ds-text-selected)]',
           isDropTarget && dropIndicator?.position === 'inside' && 'bg-[var(--ds-background-selected)]',
           isDragging && 'opacity-40',
@@ -125,17 +136,14 @@ function DraggableRow({
           {node.label}
         </span>
 
-        {!node.disabled && (
-          <button
-            type="button"
-            {...attributes}
-            {...listeners}
+        {!node.disabled && renderRowEnd && (
+          <span
+            className="ml-auto flex shrink-0 items-center"
+            onPointerDown={(e) => e.stopPropagation()}
             onClick={(e) => e.stopPropagation()}
-            aria-label="드래그해서 이동"
-            className="ml-auto flex h-5 w-5 shrink-0 cursor-grab items-center justify-center text-[var(--ds-text-subtlest)] hover:text-[var(--ds-text-subtle)] active:cursor-grabbing"
           >
-            <GripVertical size={13} />
-          </button>
+            {renderRowEnd(node, hasChildren)}
+          </span>
         )}
       </div>
       {isDropTarget && dropIndicator?.position === 'after' && (
@@ -146,7 +154,15 @@ function DraggableRow({
 }
 
 /** 드래그로 순서 변경/이동이 가능한 트리. 정적 표시만 필요하면 Tree를 사용한다. */
-export function DraggableTree({ data, size = 'default', defaultExpandedIds = [], selectedId, onSelect, onMove }: DraggableTreeProps) {
+export function DraggableTree({
+  data,
+  size = 'default',
+  defaultExpandedIds = [],
+  selectedId,
+  onSelect,
+  onMove,
+  renderRowEnd,
+}: DraggableTreeProps) {
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set(defaultExpandedIds))
   const [activeId, setActiveId] = useState<string | null>(null)
   const [dropIndicator, setDropIndicator] = useState<DropIndicator | null>(null)
@@ -207,6 +223,7 @@ export function DraggableTree({ data, size = 'default', defaultExpandedIds = [],
           dropIndicator={dropIndicator}
           onToggleExpand={toggleExpand}
           onSelectNode={(n) => onSelect?.(n.id, n)}
+          renderRowEnd={renderRowEnd}
         />
         {hasChildren && isExpanded && <div>{node.children!.map((child) => renderNode(child, depth + 1))}</div>}
       </div>
