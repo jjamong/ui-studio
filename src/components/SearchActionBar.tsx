@@ -26,11 +26,13 @@ export interface SearchActionBarProps {
   extraActions?: ReactNode
 }
 
+const EMPTY_FILTERS: FilterConfig[] = []
+
 /** 검색어 + 필터 셀렉트 + 조회 버튼을 하나로 묶은 공용 검색/필터 바. 목록형 화면 상단에서 재사용한다. */
 export function SearchActionBar({
   searchPlaceholder = '검색어 입력...',
   initialSearchQuery = '',
-  filters = [],
+  filters = EMPTY_FILTERS,
   onSearch,
   totalCount,
   extraActions,

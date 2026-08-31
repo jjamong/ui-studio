@@ -1,0 +1,168 @@
+/* Storybook 프리뷰 전용 테마 값. ui-studio 컴포넌트는 --ds-*, --text-* 변수 "이름"만 참조하고
+   값은 갖지 않으므로(TOKENS.md 참고), 여기서 asset-studio/front의 실제 값을 그대로 가져와 채운다.
+   이 파일은 dist 빌드에는 포함되지 않는다 — Storybook 미리보기에서만 쓰인다. */
+@import "tailwindcss";
+@source "../src";
+
+@theme {
+  --font-sans: system-ui, "Segoe UI", Roboto, sans-serif;
+
+  --text-2xs: 0.625rem;
+  --text-2xs--line-height: 0.9rem;
+  --text-xs: 0.6875rem;
+  --text-xs--line-height: 1rem;
+  --text-sm: 0.75rem;
+  --text-sm--line-height: 1.1rem;
+  --text-base: 0.8125rem;
+  --text-base--line-height: 1.2rem;
+  --text-lg: 0.875rem;
+  --text-lg--line-height: 1.3rem;
+  --text-xl: 0.9375rem;
+  --text-xl--line-height: 1.4rem;
+}
+
+:root {
+  color-scheme: light;
+
+  --ds-text: #11171c;
+  --ds-text-subtle: #6f6f6f;
+  --ds-text-subtlest: #8a8a8a;
+  --ds-text-disabled: #acacac;
+  --ds-text-inverse: #ffffff;
+  --ds-text-danger: #c82d4c;
+  --ds-text-success: #277c43;
+  --ds-text-information: #2272b4;
+  --ds-text-selected: #2272b4;
+
+  --ds-surface: #ffffff;
+  --ds-surface-sunken: #f7f7f7;
+  --ds-surface-raised: #ffffff;
+  --ds-surface-overlay: #ffffff;
+
+  --ds-background-neutral: #f2f2f2;
+  --ds-background-neutral-hovered: #ebebeb;
+  --ds-background-brand-bold: #2272b4;
+  --ds-background-brand-bold-hovered: #0e538b;
+  --ds-background-brand-bold-pressed: #04355d;
+  --ds-background-danger: #fff5f7;
+  --ds-background-danger-hovered: #fbd0d8;
+  --ds-background-disabled: #f7f7f7;
+  --ds-background-information: #f0f7fc;
+  --ds-background-success: #f3fcf6;
+  --ds-background-selected: rgba(34, 114, 180, 0.08);
+  --ds-background-accent-blue-subtle: #e8f2fa;
+  --ds-background-accent-blue-bolder: #0e538b;
+  --ds-background-accent-gray-bolder: #525252;
+  --ds-background-accent-green-bolder: #277c43;
+
+  --ds-border: #ebebeb;
+  --ds-border-focused: #2272b4;
+  --ds-border-danger: #fbd0d8;
+  --ds-border-success: #c2e8ce;
+  --ds-border-information: #bee0f7;
+
+  --ds-blanket: rgba(17, 23, 28, 0.5);
+  --ds-shadow-raised: 0 1px 4px rgba(17, 23, 28, 0.12);
+  --ds-shadow-overlay: 0 4px 16px rgba(17, 23, 28, 0.18);
+
+  --ds-icon-brand: #2272b4;
+  --ds-skeleton: #ebebeb;
+
+  --ds-z-dropdown: 50;
+  --ds-z-toast: 100;
+  --ds-z-modal: 150;
+  --ds-z-route-loading: 200;
+
+  --ds-motion-duration-fast: 120ms;
+  --ds-motion-duration-base: 200ms;
+  --ds-motion-duration-slow: 320ms;
+  --ds-motion-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+}
+
+@theme {
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.625rem;
+  --radius-full: 9999px;
+}
+
+/* 다크 모드 값 세트. --ds-* 라이트 값과 짝을 이루는 같은 토큰 이름의 다른 값일 뿐 별도
+   테마가 아니다 — asset-studio/front/src/index.css와 동일한 값을 그대로 가져왔다.
+   :root가 아니라 임의 요소를 선택하므로, <html>에 걸면 전체 페이지가, 특정 컨테이너에
+   걸면 그 영역만 다크로 스코프된다(Foundations/Tokens 스토리의 라이트/다크 비교용). */
+[data-theme='dark'] {
+  color-scheme: dark;
+  background-color: #1b1f23;
+  color: #e6edf3;
+
+  --ds-text: #e6edf3;
+  --ds-text-subtle: #9ea7b3;
+  --ds-text-subtlest: #768390;
+  --ds-text-disabled: #545d68;
+  --ds-text-inverse: #11171c;
+  --ds-text-danger: #f85149;
+  --ds-text-success: #56d364;
+  --ds-text-information: #58a6ff;
+  --ds-text-selected: #58a6ff;
+
+  --ds-surface: #1b1f23;
+  --ds-surface-sunken: #14171a;
+  --ds-surface-raised: #22272b;
+  --ds-surface-overlay: #2c333a;
+
+  --ds-background-neutral: #2d333b;
+  --ds-background-neutral-hovered: #373e47;
+  --ds-background-brand-bold: #1f6feb;
+  --ds-background-brand-bold-hovered: #388bfd;
+  --ds-background-brand-bold-pressed: #58a6ff;
+  --ds-background-danger: #2d1214;
+  --ds-background-danger-hovered: #3d1a1d;
+  --ds-background-disabled: #21262c;
+  --ds-background-information: #0d1f2d;
+  --ds-background-success: #0d2818;
+  --ds-background-selected: rgba(88, 166, 255, 0.15);
+  --ds-background-accent-blue-subtle: #12283b;
+  --ds-background-accent-blue-bolder: #388bfd;
+  --ds-background-accent-gray-bolder: #8b949e;
+  --ds-background-accent-green-bolder: #56d364;
+
+  --ds-border: #373e47;
+  --ds-border-focused: #58a6ff;
+  --ds-border-danger: #6e2830;
+  --ds-border-success: #1b4721;
+  --ds-border-information: #1c4a6e;
+
+  --ds-blanket: rgba(1, 4, 9, 0.7);
+  --ds-shadow-raised: 0 1px 4px rgba(0, 0, 0, 0.4);
+  --ds-shadow-overlay: 0 4px 16px rgba(0, 0, 0, 0.6);
+
+  --ds-icon-brand: #58a6ff;
+  --ds-skeleton: #373e47;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--ds-surface);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.15s ease;
+}
+
+@keyframes route-loading-bar-grow {
+  0% {
+    width: 0%;
+    opacity: 1;
+  }
+  80% {
+    width: 80%;
+  }
+  100% {
+    width: 90%;
+  }
+}
+
+.route-loading-bar-fill {
+  width: 0%;
+  animation: route-loading-bar-grow 3.5s cubic-bezier(0.1, 0.6, 0.3, 1) forwards;
+}

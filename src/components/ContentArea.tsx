@@ -12,5 +12,5 @@ export interface ContentAreaProps {
  * 바로 배치한다.
  */
 export function ContentArea({ children, className }: ContentAreaProps) {
-  return <div className={clsx('min-h-full rounded-tl-2xl bg-[var(--ds-surface)] p-6', className)}>{children}</div>
+  return <div className={clsx('min-h-full rounded-tl-2xl bg-[var(--ds-surface)] p-4', className)}>{children}</div>
 }

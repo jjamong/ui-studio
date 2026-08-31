@@ -56,7 +56,7 @@ export function RouteLoadingBar({ pathname }: RouteLoadingBarProps) {
   if (!isLoading) return null
 
   return (
-    <div className="pointer-events-none fixed left-0 right-0 top-0 z-[200] h-[3px] overflow-hidden">
+    <div className="pointer-events-none fixed left-0 right-0 top-0 z-[var(--ds-z-route-loading)] h-[3px] overflow-hidden">
       <div className="route-loading-bar-fill h-full bg-[var(--ds-background-brand-bold)]" />
     </div>
   )

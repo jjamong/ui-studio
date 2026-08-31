@@ -16,7 +16,7 @@ export interface BreadcrumbProps {
 /** 공용 브레드크럼. 마지막 항목은 현재 위치로 강조 표시되고 링크로 렌더링되지 않는다. */
 export function Breadcrumb({ items }: BreadcrumbProps) {
   return (
-    <nav aria-label="breadcrumb" className="flex min-w-0 items-center gap-1.5 text-sm">
+    <nav aria-label="breadcrumb" className="flex min-w-0 items-center gap-1.5 text-xs">
       {items.map((item, idx) => {
         const isLast = idx === items.length - 1
         const clickable = !isLast && (item.href || item.onClick)

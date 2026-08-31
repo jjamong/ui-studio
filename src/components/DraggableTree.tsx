@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { memo, useCallback, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import {
   DndContext,
   DragOverlay,
   PointerSensor,
+  pointerWithin,
   useDraggable,
   useDroppable,
   useSensor,
@@ -56,14 +57,19 @@ function findNode(nodes: TreeNode[], id: string): TreeNode | undefined {
   return undefined
 }
 
-function DraggableRow({
+/**
+ * 트리 한 행. dropPosition은 이 행이 현재 드롭 대상일 때만 위치('before'|'after'|'inside')를
+ * 담아 전달되고, 그 외에는 null이다(드래그 중 바뀌는 dropIndicator 객체 전체가 아니라 이
+ * 행에 해당하는 값만 받아야 memo가 실제로 무관한 행의 리렌더를 걸러낸다).
+ */
+const DraggableRow = memo(function DraggableRow({
   node,
   depth,
   size,
   isExpanded,
   hasChildren,
   isSelected,
-  dropIndicator,
+  dropPosition,
   onToggleExpand,
   onSelectNode,
   renderRowEnd,
@@ -74,7 +80,7 @@ function DraggableRow({
   isExpanded: boolean
   hasChildren: boolean
   isSelected: boolean
-  dropIndicator: DropIndicator | null
+  dropPosition: DropPosition | null
   onToggleExpand: (id: string) => void
   onSelectNode: (node: TreeNode) => void
   renderRowEnd?: (node: TreeNode, hasChildren: boolean) => ReactNode
@@ -86,11 +92,11 @@ function DraggableRow({
   })
   const { setNodeRef: setDropRef } = useDroppable({ id: node.id, data: { node }, disabled: node.disabled })
 
-  const isDropTarget = dropIndicator?.id === node.id
+  const isDropTarget = dropPosition !== null
 
   return (
     <div className="relative">
-      {isDropTarget && dropIndicator?.position === 'before' && (
+      {isDropTarget && dropPosition === 'before' && (
         <div className="absolute inset-x-0 top-0 h-0.5 bg-[var(--ds-background-brand-bold)]" style={{ marginLeft: depth * 16 + 4 }} />
       )}
       <div
@@ -101,11 +107,11 @@ function DraggableRow({
         {...(node.disabled ? {} : attributes)}
         {...(node.disabled ? {} : listeners)}
         className={clsx(
-          'flex items-center gap-1 rounded pr-2 transition-colors',
+          'group flex items-center gap-1 rounded pr-2 transition-colors',
           rowHeightClass[size],
           node.disabled ? 'cursor-not-allowed opacity-50' : 'cursor-grab hover:bg-[var(--ds-background-neutral-hovered)] active:cursor-grabbing',
           isSelected && 'bg-[var(--ds-background-selected)] font-semibold text-[var(--ds-text-selected)]',
-          isDropTarget && dropIndicator?.position === 'inside' && 'bg-[var(--ds-background-selected)]',
+          isDropTarget && dropPosition === 'inside' && 'bg-[var(--ds-background-selected)]',
           isDragging && 'opacity-40',
         )}
         style={{ paddingLeft: depth * 16 + 4 }}
@@ -138,7 +144,7 @@ function DraggableRow({
 
         {!node.disabled && renderRowEnd && (
           <span
-            className="ml-auto flex shrink-0 items-center"
+            className="ml-auto flex shrink-0 items-center opacity-0 transition-opacity group-hover:opacity-100"
             onPointerDown={(e) => e.stopPropagation()}
             onClick={(e) => e.stopPropagation()}
           >
@@ -146,12 +152,12 @@ function DraggableRow({
           </span>
         )}
       </div>
-      {isDropTarget && dropIndicator?.position === 'after' && (
+      {isDropTarget && dropPosition === 'after' && (
         <div className="absolute inset-x-0 bottom-0 h-0.5 bg-[var(--ds-background-brand-bold)]" style={{ marginLeft: depth * 16 + 4 }} />
       )}
     </div>
   )
-}
+})
 
 /** 드래그로 순서 변경/이동이 가능한 트리. 정적 표시만 필요하면 Tree를 사용한다. */
 export function DraggableTree({
@@ -166,32 +172,45 @@ export function DraggableTree({
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set(defaultExpandedIds))
   const [activeId, setActiveId] = useState<string | null>(null)
   const [dropIndicator, setDropIndicator] = useState<DropIndicator | null>(null)
+  /** 드래그 시작 시점의 포인터 y좌표. dragOver 중 delta.y를 더해 실제 포인터 위치를 복원한다
+   * (드래그 중인 요소 사각형의 겹침 면적이 아니라 커서가 실제로 어느 행 위에 있는지로
+   * before/after/inside를 판정해야 그룹 경계 근처에서 헤더가 잘못 선택되지 않는다). */
+  const pointerStartYRef = useRef<number | null>(null)
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }))
 
-  function toggleExpand(id: string) {
+  const toggleExpand = useCallback((id: string) => {
     setExpandedIds((prev) => {
       const next = new Set(prev)
       if (next.has(id)) next.delete(id)
       else next.add(id)
       return next
     })
-  }
+  }, [])
+
+  const handleSelectNode = useCallback((node: TreeNode) => onSelect?.(node.id, node), [onSelect])
 
   function handleDragStart(event: DragStartEvent) {
     setActiveId(String(event.active.id))
+    const activatorEvent = event.activatorEvent
+    pointerStartYRef.current = 'clientY' in activatorEvent ? (activatorEvent as PointerEvent).clientY : null
   }
 
   function handleDragOver(event: DragOverEvent) {
-    const { active, over } = event
+    const { active, over, delta } = event
     if (!over || active.id === over.id) {
       setDropIndicator(null)
       return
     }
-    const activeRect = active.rect.current.translated
-    if (!activeRect) return
     const overRect = over.rect
-    const relative = (activeRect.top + activeRect.height / 2 - overRect.top) / overRect.height
+    let relative: number
+    if (pointerStartYRef.current !== null) {
+      relative = (pointerStartYRef.current + delta.y - overRect.top) / overRect.height
+    } else {
+      const activeRect = active.rect.current.translated
+      if (!activeRect) return
+      relative = (activeRect.top + activeRect.height / 2 - overRect.top) / overRect.height
+    }
     const position: DropPosition = relative < 0.25 ? 'before' : relative > 0.75 ? 'after' : 'inside'
     setDropIndicator({ id: String(over.id), position })
   }
@@ -210,6 +229,9 @@ export function DraggableTree({
   function renderNode(node: TreeNode, depth: number) {
     const hasChildren = !!node.children && node.children.length > 0
     const isExpanded = expandedIds.has(node.id)
+    const dropPosition = dropIndicator?.id === node.id ? dropIndicator.position : null
+    // 자식 목록의 세로 가이드라인을 이 노드의 펼침 화살표 중앙(paddingLeft + 화살표 폭의 절반)에 맞춘다.
+    const guideLeft = depth * 16 + 4 + 8
 
     return (
       <div key={node.id}>
@@ -220,18 +242,32 @@ export function DraggableTree({
           isExpanded={isExpanded}
           hasChildren={hasChildren}
           isSelected={selectedId === node.id}
-          dropIndicator={dropIndicator}
+          dropPosition={dropPosition}
           onToggleExpand={toggleExpand}
-          onSelectNode={(n) => onSelect?.(n.id, n)}
+          onSelectNode={handleSelectNode}
           renderRowEnd={renderRowEnd}
         />
-        {hasChildren && isExpanded && <div>{node.children!.map((child) => renderNode(child, depth + 1))}</div>}
+        {hasChildren && isExpanded && (
+          <div className="relative">
+            <div
+              className="pointer-events-none absolute inset-y-0 w-px bg-[var(--ds-border)]"
+              style={{ left: guideLeft }}
+            />
+            {node.children!.map((child) => renderNode(child, depth + 1))}
+          </div>
+        )}
       </div>
     )
   }
 
   return (
-    <DndContext sensors={sensors} onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
+    <DndContext
+      sensors={sensors}
+      collisionDetection={pointerWithin}
+      onDragStart={handleDragStart}
+      onDragOver={handleDragOver}
+      onDragEnd={handleDragEnd}
+    >
       <div className="flex flex-col">{data.map((node) => renderNode(node, 0))}</div>
       <DragOverlay>
         {activeNode && (

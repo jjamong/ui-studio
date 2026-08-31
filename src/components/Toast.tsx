@@ -31,7 +31,7 @@ export function Toast({ statusMessage, setStatusMessage }: ToastProps) {
   return (
     <div
       className={clsx(
-        'fixed left-1/2 top-6 z-[100] flex w-full max-w-lg -translate-x-1/2 items-start gap-2.5 rounded border p-3.5 shadow-[var(--ds-shadow-overlay)]',
+        'fixed left-1/2 top-6 z-[var(--ds-z-toast)] flex w-full max-w-lg -translate-x-1/2 items-start gap-2.5 rounded border p-3.5 shadow-[var(--ds-shadow-overlay)]',
         colorClass[statusMessage.type],
       )}
     >

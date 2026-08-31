@@ -27,6 +27,12 @@ export interface TreeProps {
   /** mode="checkable"일 때 체크된 노드 id 목록. */
   checkedIds?: string[]
   onCheckedChange?: (ids: string[]) => void
+  /**
+   * 지정하면 각 행 끝에 이 함수가 반환하는 내용을 추가로 렌더링한다(더보기 메뉴 등).
+   * 평소엔 숨겨져 있다가 행에 마우스를 올렸을 때만 나타난다. 클릭이 행 선택으로 전파되지
+   * 않게 자체적으로 stopPropagation된다.
+   */
+  renderRowEnd?: (node: TreeNode, hasChildren: boolean) => ReactNode
 }
 
 const rowHeightClass: Record<TreeSize, string> = {
@@ -59,6 +65,7 @@ export function Tree({
   onSelect,
   checkedIds = [],
   onCheckedChange,
+  renderRowEnd,
 }: TreeProps) {
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set(defaultExpandedIds))
 
@@ -102,12 +109,14 @@ export function Tree({
     const isExpanded = expandedIds.has(node.id)
     const isSelected = mode === 'selectable' && selectedId === node.id
     const { checked, indeterminate } = mode === 'checkable' ? checkStateOf(node) : { checked: false, indeterminate: false }
+    // 자식 목록의 세로 가이드라인을 이 노드의 펼침 화살표 중앙(paddingLeft + 화살표 폭의 절반)에 맞춘다.
+    const guideLeft = depth * 16 + 4 + 8
 
     return (
       <div key={node.id}>
         <div
           className={clsx(
-            'flex items-center gap-1 rounded pr-2 transition-colors',
+            'group flex items-center gap-1 rounded pr-2 transition-colors',
             rowHeightClass[size],
             node.disabled
               ? 'cursor-not-allowed opacity-50'
@@ -155,9 +164,26 @@ export function Tree({
           <span className={clsx('truncate', isSelected ? 'text-[var(--ds-text-selected)]' : 'text-[var(--ds-text)]')}>
             {node.label}
           </span>
+
+          {!node.disabled && renderRowEnd && (
+            <span
+              className="ml-auto flex shrink-0 items-center opacity-0 transition-opacity group-hover:opacity-100"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {renderRowEnd(node, hasChildren)}
+            </span>
+          )}
         </div>
 
-        {hasChildren && isExpanded && <div>{node.children!.map((child) => renderNode(child, depth + 1))}</div>}
+        {hasChildren && isExpanded && (
+          <div className="relative">
+            <div
+              className="pointer-events-none absolute inset-y-0 w-px bg-[var(--ds-border)]"
+              style={{ left: guideLeft }}
+            />
+            {node.children!.map((child) => renderNode(child, depth + 1))}
+          </div>
+        )}
       </div>
     )
   }

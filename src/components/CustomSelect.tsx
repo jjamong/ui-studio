@@ -49,7 +49,7 @@ export function CustomSelect({ value, onChange, options, placeholder = '선택',
       </button>
 
       {isOpen && (
-        <div className="absolute left-0 right-0 z-50 mt-1 max-h-56 overflow-y-auto rounded border border-[var(--ds-border)] bg-[var(--ds-surface-overlay)] shadow-[var(--ds-shadow-overlay)]">
+        <div className="absolute left-0 right-0 z-[var(--ds-z-dropdown)] mt-1 max-h-56 overflow-y-auto rounded border border-[var(--ds-border)] bg-[var(--ds-surface-overlay)] shadow-[var(--ds-shadow-overlay)]">
           {options.length === 0 ? (
             <p className="px-3 py-2.5 text-center text-xs text-[var(--ds-text-subtle)]">옵션이 없습니다.</p>
           ) : (
