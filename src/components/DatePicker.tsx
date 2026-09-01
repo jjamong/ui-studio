@@ -74,7 +74,7 @@ export function DatePicker({
 
   const { refs, floatingStyles, context } = useFloating({
     open,
-    onOpenChange: (next) => {
+    onOpenChange: (next: boolean) => {
       setOpen(next)
       if (!next) setDraft(value)
     },

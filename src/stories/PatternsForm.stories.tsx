@@ -5,7 +5,7 @@ import { Button } from '../components/Button'
 import { Modal } from '../components/Modal'
 
 const meta: Meta = {
-  title: '패턴/입력조회',
+  title: '패턴/폼',
   parameters: { layout: 'padded' },
 }
 export default meta
@@ -17,7 +17,7 @@ type Story = StoryObj
  * (RealEstateDetailPage의 "주소 입력 후 부동산유형 조회" 흐름과 같은 골격).
  * 라벨이 있는 Input과 라벨이 없는 Button의 바닥선을 맞추려면 items-start가 아니라 items-end로 감싼다.
  */
-export const 인풋조회: Story = {
+export const 인풋버튼: Story = {
   render: () => {
     const [businessNumber, setBusinessNumber] = useState('')
     const [companyName, setCompanyName] = useState<string | null>(null)
@@ -63,7 +63,7 @@ const MOCK_ADDRESSES = [
  * 고르면 주소 인풋이 채워지며 모달이 닫힌다. 상세주소(동/호수 등)는 검색 대상이 아니라서
  * 별도 인풋으로 그 아래에 둔다 — 주소가 바뀌어도 상세주소는 사용자가 입력한 값을 그대로 유지한다.
  */
-export const 주소검색: Story = {
+export const 주소: Story = {
   render: () => {
     const [address, setAddress] = useState('')
     const [detailAddress, setDetailAddress] = useState('')

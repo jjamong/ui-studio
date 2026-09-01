@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { Home, Building2, Wallet, Settings } from 'lucide-react'
 import { NavRail } from '../components/NavRail'
 import { TopBar } from '../components/TopBar'
-import { ContentArea } from '../components/ContentArea'
+import { AppShell } from '../components/AppShell'
 import { Breadcrumb } from '../components/Breadcrumb'
 
 const meta: Meta = {
@@ -21,40 +21,39 @@ const navItems = [
   { key: 'settings', label: '설정', icon: <Settings size={16} /> },
 ]
 
-/** NavRail + TopBar + ContentArea 조합. 사이드바/탑바처럼 프로젝트마다 네비 구성이 다른 부분을
- * 소비 프로젝트가 어떻게 조립하는지 보여주는 참고용 페이지 셸이다. */
+/** NavRail(lnb) + TopBar(top) + ContentArea(container)를 AppShell로 조합한 참고용 페이지 셸.
+ * 각 영역은 소비 프로젝트가 자기 라우터/메뉴 데이터로 만든 엘리먼트를 그대로 AppShell에 넘긴다. */
 export const 기본틀: Story = {
   render: () => {
     const [collapsed, setCollapsed] = useState(false)
     const [active, setActive] = useState('re')
 
     return (
-      <div className="flex h-screen w-full flex-col bg-[var(--ds-surface-sunken)]">
-        <TopBar
-          logo={<div className="h-5 w-5 rounded bg-[var(--ds-background-brand-bold)]" />}
-          title="jjamong asset-studio"
-          collapsed={collapsed}
-          onToggleCollapsed={() => setCollapsed((c) => !c)}
-        />
-        <div className="flex min-h-0 flex-1">
+      <AppShell
+        top={
+          <TopBar
+            logo={<div className="h-5 w-5 rounded bg-[var(--ds-background-brand-bold)]" />}
+            title="jjamong asset-studio"
+            collapsed={collapsed}
+            onToggleCollapsed={() => setCollapsed((c) => !c)}
+          />
+        }
+        lnb={
           <NavRail
             items={navItems.map((item) => ({ ...item, active: item.key === active, onClick: () => setActive(item.key) }))}
             collapsed={collapsed}
           />
-          <div className="min-w-0 flex-1 overflow-y-auto">
-            <ContentArea>
-              <div className="mb-4">
-                <Breadcrumb items={[{ label: '자산', onClick: () => {} }, { label: '부동산' }]} />
-              </div>
-              <h1 className="mb-2 text-lg font-bold text-[var(--ds-text)]">부동산</h1>
-              <p className="text-sm text-[var(--ds-text-subtle)]">
-                NavRail(좌측 아이콘 레일) + TopBar(상단 바) + ContentArea(본문 컨테이너)를 조합한 기본 페이지 셸입니다.
-                상단의 토글 버튼으로 NavRail을 접고 펼쳐보세요.
-              </p>
-            </ContentArea>
-          </div>
+        }
+      >
+        <div className="mb-4">
+          <Breadcrumb items={[{ label: '자산', onClick: () => {} }, { label: '부동산' }]} />
         </div>
-      </div>
+        <h1 className="mb-2 text-lg font-bold text-[var(--ds-text)]">부동산</h1>
+        <p className="text-sm text-[var(--ds-text-subtle)]">
+          AppShell이 top(TopBar) / lnb(NavRail) / container(ContentArea) 세 영역을 조합한 기본 페이지 셸입니다.
+          상단의 토글 버튼으로 NavRail을 접고 펼쳐보세요.
+        </p>
+      </AppShell>
     )
   },
 }

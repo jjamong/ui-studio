@@ -76,6 +76,9 @@ export type { TopBarProps } from './components/TopBar'
 export { ContentArea } from './components/ContentArea'
 export type { ContentAreaProps } from './components/ContentArea'
 
+export { AppShell } from './components/AppShell'
+export type { AppShellProps } from './components/AppShell'
+
 export { Tabs } from './components/Tabs'
 export type { TabsProps, TabItem } from './components/Tabs'
 
