@@ -56,9 +56,19 @@ export function SearchActionBar({
     setTempFilters((prev) => ({ ...prev, [key]: value }))
   }
 
+  function handleReset() {
+    setTempSearch(initialSearchQuery)
+    const resetFilters: Record<string, string> = {}
+    filters.forEach((f) => {
+      resetFilters[f.key] = f.value
+    })
+    setTempFilters(resetFilters)
+    onSearch(initialSearchQuery, resetFilters)
+  }
+
   return (
-    <div className="flex flex-col gap-3 rounded border border-[var(--ds-border)] bg-[var(--ds-surface)] p-3 md:flex-row md:items-center md:justify-between">
-      <div className="flex flex-1 flex-col items-stretch gap-2 sm:flex-row sm:items-center">
+    <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+      <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
         {filters.map((filter) => (
           <div key={filter.key} className={filter.widthClass ?? 'w-full sm:w-40'}>
             <CustomSelect
@@ -69,24 +79,24 @@ export function SearchActionBar({
             />
           </div>
         ))}
-
-        <div className="relative flex flex-1 items-center gap-2">
-          <div className="relative flex-1">
-            <Search size={14} className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--ds-text-subtle)]" />
-            <input
-              type="text"
-              value={tempSearch}
-              placeholder={searchPlaceholder}
-              onChange={(e) => setTempSearch(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
-              className="h-8 w-full rounded border border-[var(--ds-border)] bg-[var(--ds-surface-sunken)] pl-8 pr-3 text-sm text-[var(--ds-text)] outline-none focus:border-[var(--ds-border-focused)] focus:bg-[var(--ds-surface)]"
-            />
-          </div>
-          <Button onClick={handleSubmit}>조회</Button>
-        </div>
       </div>
 
-      <div className="flex items-center justify-between gap-2 md:justify-end">
+      <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
+        <div className="relative">
+          <Search size={14} className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--ds-text-subtle)]" />
+          <input
+            type="text"
+            value={tempSearch}
+            placeholder={searchPlaceholder}
+            onChange={(e) => setTempSearch(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
+            className="h-8 w-full rounded border border-[var(--ds-border)] bg-[var(--ds-surface-sunken)] pl-8 pr-3 text-sm text-[var(--ds-text)] outline-none focus:border-[var(--ds-border-focused)] focus:bg-[var(--ds-surface)] sm:w-56"
+          />
+        </div>
+        <Button onClick={handleSubmit}>조회</Button>
+        <Button variant="secondary" onClick={handleReset}>
+          초기화
+        </Button>
         {totalCount !== undefined && (
           <span className="text-xs text-[var(--ds-text-subtle)]">총 {totalCount.toLocaleString()}개</span>
         )}

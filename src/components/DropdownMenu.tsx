@@ -68,7 +68,7 @@ export function DropdownMenu({ trigger, items, placement = 'bottom-start' }: Dro
               ref={refs.setFloating}
               style={floatingStyles}
               {...getFloatingProps()}
-              className="z-[var(--ds-z-dropdown)] min-w-[160px] rounded-md border border-[var(--ds-border)] bg-[var(--ds-surface-overlay)] py-1 shadow-[var(--ds-shadow-overlay)]"
+              className="z-[var(--ds-z-dropdown)] min-w-[160px] overflow-hidden rounded-md border border-[var(--ds-border)] bg-[var(--ds-surface-overlay)] shadow-[var(--ds-shadow-overlay)]"
             >
               {items.map((item, index) => (
                 <button

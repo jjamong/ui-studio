@@ -64,9 +64,9 @@ export function NavRail({ items, collapsed, expandedWidth = 160, collapsedWidth 
               // 아이콘의 좌측 여백을 접힘 여부와 상관없이 고정해, 펼친 상태에서도 이미 접힘 상태의
               // 토글 버튼(TopBar) 위치와 정렬돼 있도록 한다. 그래야 접고 펼 때 아이콘이 좌우로 움직이지
               // 않고 라벨(CollapsibleLabel)의 폭/투명도만 바뀐다.
-              'flex h-9 cursor-pointer items-center gap-2.5 rounded pl-4 pr-2.5 text-xs font-semibold transition-colors',
+              'flex h-8 cursor-pointer items-center gap-2.5 rounded pl-4 pr-2.5 text-sm transition-colors',
               item.active
-                ? 'bg-[var(--ds-background-selected)] text-[var(--ds-text-selected)]'
+                ? 'bg-[var(--ds-background-selected)] text-[var(--ds-text)]'
                 : 'text-[var(--ds-text-subtle)] hover:bg-[var(--ds-background-neutral-hovered)] hover:text-[var(--ds-text)]',
             )}
           >

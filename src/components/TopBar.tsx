@@ -18,7 +18,7 @@ export interface TopBarProps {
  */
 export function TopBar({ logo, title, collapsed, onToggleCollapsed, right, railWidth = 64 }: TopBarProps) {
   return (
-    <header className="flex h-12 shrink-0 items-center gap-2 bg-[var(--ds-surface-sunken)] pr-3">
+    <header className="flex h-12 shrink-0 items-center gap-2 bg-[var(--ds-surface)] pr-3">
       <div className="flex shrink-0 items-center justify-center" style={{ width: railWidth }}>
         <button
           type="button"

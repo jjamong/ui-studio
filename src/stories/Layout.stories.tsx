@@ -7,7 +7,7 @@ import { ContentArea } from '../components/ContentArea'
 import { Breadcrumb } from '../components/Breadcrumb'
 
 const meta: Meta = {
-  title: '레이아웃/AppShell',
+  title: '레이아웃/기본틀',
   parameters: { layout: 'fullscreen' },
 }
 export default meta
@@ -23,7 +23,7 @@ const navItems = [
 
 /** NavRail + TopBar + ContentArea 조합. 사이드바/탑바처럼 프로젝트마다 네비 구성이 다른 부분을
  * 소비 프로젝트가 어떻게 조립하는지 보여주는 참고용 페이지 셸이다. */
-export const AppShell: Story = {
+export const 기본틀: Story = {
   render: () => {
     const [collapsed, setCollapsed] = useState(false)
     const [active, setActive] = useState('re')
