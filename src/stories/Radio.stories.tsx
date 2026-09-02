@@ -4,9 +4,9 @@ import { RadioGroup } from '../components/Radio'
 import type { RadioGroupProps } from '../components/Radio'
 
 const options = [
-  { value: 'card', label: '부동산' },
-  { value: 'cash', label: '현금성 자산' },
-  { value: 'stock', label: '주식' },
+  { value: 'notice', label: '공지' },
+  { value: 'event', label: '이벤트' },
+  { value: 'guide', label: '안내' },
 ]
 
 const meta: Meta<typeof RadioGroup> = {
@@ -23,7 +23,7 @@ type Story = StoryObj<typeof RadioGroup>
 
 export const Playground: Story = {
   render: (args: RadioGroupProps) => {
-    const [value, setValue] = useState('card')
+    const [value, setValue] = useState('notice')
     return <RadioGroup {...args} value={value} onChange={setValue} />
   },
 }
@@ -31,7 +31,7 @@ export const Playground: Story = {
 export const Horizontal: Story = {
   args: { layout: 'horizontal' },
   render: (args: RadioGroupProps) => {
-    const [value, setValue] = useState('card')
+    const [value, setValue] = useState('notice')
     return <RadioGroup {...args} value={value} onChange={setValue} />
   },
 }

@@ -6,9 +6,9 @@ const meta: Meta<typeof Breadcrumb> = {
   component: Breadcrumb,
   args: {
     items: [
-      { label: '자산', onClick: () => {} },
-      { label: '부동산', onClick: () => {} },
-      { label: '강남 오피스텔' },
+      { label: '공지사항', onClick: () => {} },
+      { label: '이벤트', onClick: () => {} },
+      { label: '커뮤니티 정기 모임 안내' },
     ],
   },
 }

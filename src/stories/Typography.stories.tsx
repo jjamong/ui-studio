@@ -25,7 +25,7 @@ export const Scale: Story = {
       {textScale.map((size) => (
         <div key={size.label} className="flex items-baseline gap-4">
           <code className="w-20 shrink-0 text-xs text-[var(--ds-text-subtle)]">{size.label}</code>
-          <span className={`${size.className} text-[var(--ds-text)]`}>강남 오피스텔 부동산 자산 관리 Design System</span>
+          <span className={`${size.className} text-[var(--ds-text)]`}>공지사항 상세 페이지 타이포그래피 예시 Design System</span>
         </div>
       ))}
     </div>

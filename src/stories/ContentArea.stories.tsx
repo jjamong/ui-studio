@@ -14,10 +14,7 @@ export const Playground: Story = {
   render: () => (
     <div className="bg-[var(--ds-surface-sunken)] p-4">
       <ContentArea>
-        <h1 className="mb-2 text-lg font-bold text-[var(--ds-text)]">부동산</h1>
-        <p className="text-sm text-[var(--ds-text-subtle)]">
-          좌상단이 둥근 본문 컨테이너입니다. 그리드/차트/패널은 이 안에 바로 배치하고, 이중 라운딩은 피합니다.
-        </p>
+        <h1 className="mb-2 text-lg font-bold text-[var(--ds-text)]">상세</h1>
       </ContentArea>
     </div>
   ),

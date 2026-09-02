@@ -15,8 +15,8 @@ export const Playground: Story = {
   render: () => (
     <div className="w-80">
       <Card
-        title="강남 오피스텔"
-        actions={<Badge variant="success">보유중</Badge>}
+        title="시스템 점검 안내"
+        actions={<Badge variant="success">게시중</Badge>}
         footer={
           <div className="flex justify-end gap-2">
             <Button variant="secondary" size="sm">
@@ -26,7 +26,7 @@ export const Playground: Story = {
           </div>
         }
       >
-        <p className="text-sm text-[var(--ds-text-subtle)]">서울시 강남구 · 매입가 8.2억 · 현재가 9.1억</p>
+        <p className="text-sm text-[var(--ds-text-subtle)]">전체 서비스 대상 · 점검 시간 02:00~04:00 · 영향 범위 전체</p>
       </Card>
     </div>
   ),

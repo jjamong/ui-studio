@@ -12,5 +12,5 @@ type Story = StoryObj<typeof LoadingSpinner>
 export const Playground: Story = {}
 
 export const CustomMessage: Story = {
-  args: { message: '자산 목록을 불러오는 중...' },
+  args: { message: '목록을 불러오는 중...' },
 }

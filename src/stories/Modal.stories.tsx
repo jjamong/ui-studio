@@ -20,7 +20,7 @@ export const Playground: Story = {
         <Modal
           open={open}
           onClose={() => setOpen(false)}
-          title="강남 오피스텔"
+          title="시스템 점검 안내"
           footer={
             <>
               <Button variant="danger" onClick={() => setOpen(false)}>

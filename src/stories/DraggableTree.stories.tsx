@@ -7,19 +7,19 @@ import { Trash2 } from 'lucide-react'
 
 const initialData: TreeNode[] = [
   {
-    id: 'real-estate',
-    label: '부동산',
+    id: 'notice',
+    label: '공지사항',
     children: [
-      { id: 're-1', label: '강남 오피스텔' },
-      { id: 're-2', label: '판교 아파트' },
+      { id: 'notice-1', label: '시스템 점검 안내' },
+      { id: 'notice-2', label: '이용약관 개정 안내' },
     ],
   },
   {
-    id: 'cash',
-    label: '현금성 자산',
-    children: [{ id: 'cash-1', label: '입출금 통장' }],
+    id: 'user',
+    label: '사용자',
+    children: [{ id: 'user-1', label: '관리자' }],
   },
-  { id: 'stock', label: '주식' },
+  { id: 'setting', label: '설정' },
 ]
 
 function removeNode(nodes: TreeNode[], id: string): { removed: TreeNode | null; rest: TreeNode[] } {
@@ -71,7 +71,7 @@ export const Playground: Story = {
     return (
       <DraggableTree
         data={data}
-        defaultExpandedIds={['real-estate', 'cash']}
+        defaultExpandedIds={['notice', 'user']}
         selectedId={selectedId}
         onSelect={(id) => setSelectedId(id)}
         onMove={(draggedId, targetId, position) => {

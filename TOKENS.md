@@ -19,6 +19,7 @@ Atlaskit Design Tokens(`@atlaskit/tokens`)의 변수 이름 규칙을 그대로 
 | 배경(선택됨) | `--ds-background-selected` |
 | 배경(정보/성공 — Toast용) | `--ds-background-information`, `--ds-background-success` |
 | 배경(비활성) | `--ds-background-disabled` |
+| 배경(액센트 배지 — AppSwitcher 기본 배지색) | `--ds-background-accent-gray-bolder` (필수). `badgeClassName`으로 항목별 다른 색을 주고 싶으면 `--ds-background-accent-blue-bolder`처럼 프로젝트가 자유롭게 이름을 정해 추가로 정의해도 된다. |
 | 서페이스 | `--ds-surface`, `--ds-surface-sunken`, `--ds-surface-overlay` |
 | 스켈레톤 | `--ds-skeleton` |
 | 모달/블랭킷(배경 딤) | `--ds-blanket` |

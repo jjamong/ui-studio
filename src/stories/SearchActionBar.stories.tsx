@@ -5,7 +5,7 @@ const meta: Meta<typeof SearchActionBar> = {
   title: '컴포넌트/SearchActionBar',
   component: SearchActionBar,
   args: {
-    searchPlaceholder: '자산명으로 검색...',
+    searchPlaceholder: '이름으로 검색...',
     totalCount: 128,
     filters: [
       {
@@ -13,8 +13,8 @@ const meta: Meta<typeof SearchActionBar> = {
         value: 'all',
         options: [
           { value: 'all', label: '전체' },
-          { value: 'real-estate', label: '부동산' },
-          { value: 'stock', label: '주식' },
+          { value: 'notice', label: '공지' },
+          { value: 'event', label: '이벤트' },
         ],
       },
     ],

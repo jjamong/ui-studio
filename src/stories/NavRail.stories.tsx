@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { Home, Building2, Wallet, Settings } from 'lucide-react'
+import { Home, Megaphone, Users, Settings } from 'lucide-react'
 import { NavRail } from '../components/NavRail'
 
 const items = [
   { key: 'home', label: '홈', icon: <Home size={16} /> },
-  { key: 're', label: '부동산', icon: <Building2 size={16} />, active: true },
-  { key: 'cash', label: '현금성 자산', icon: <Wallet size={16} /> },
+  { key: 'notice', label: '공지사항', icon: <Megaphone size={16} />, active: true },
+  { key: 'user', label: '사용자', icon: <Users size={16} /> },
   { key: 'settings', label: '설정', icon: <Settings size={16} /> },
 ]
 

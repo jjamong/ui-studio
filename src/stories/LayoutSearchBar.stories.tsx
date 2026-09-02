@@ -16,15 +16,15 @@ type Story = StoryObj
 
 const categoryOptions = [
   { value: 'all', label: '전체 종류' },
-  { value: 'real-estate', label: '부동산' },
-  { value: 'stock', label: '주식' },
-  { value: 'cash', label: '현금성 자산' },
+  { value: 'notice', label: '공지' },
+  { value: 'event', label: '이벤트' },
+  { value: 'guide', label: '안내' },
 ]
 
 const statusOptions = [
   { value: 'all', label: '전체 상태' },
-  { value: 'active', label: '보유중' },
-  { value: 'closed', label: '정리완료' },
+  { value: 'active', label: '진행중' },
+  { value: 'closed', label: '완료' },
 ]
 
 /**
@@ -88,92 +88,6 @@ export const 검색: Story = {
           <Button variant="secondary" onClick={handleReset}>
             초기화
           </Button>
-        </div>
-      </div>
-    )
-  },
-}
-
-/**
- * 버튼검색 배치: 필터(셀렉트·기간검색)만 좌측, 검색/초기화 버튼이 가장 우측. 키워드 입력이 없다.
- * 순수 배치 참고용이라 실제로 검색이 실행되는지는 다루지 않는다(그 행동은 패턴/검색의 버튼검색을 본다).
- */
-export const 버튼검색: Story = {
-  render: () => {
-    const [category, setCategory] = useState('all')
-    const [status, setStatus] = useState('all')
-    const [startDate, setStartDate] = useState('')
-    const [endDate, setEndDate] = useState('')
-
-    return (
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="w-36">
-            <CustomSelect value={category} onChange={setCategory} options={categoryOptions} />
-          </div>
-          <div className="w-36">
-            <CustomSelect value={status} onChange={setStatus} options={statusOptions} />
-          </div>
-          <div className="w-56">
-            <DateRangePicker
-              startValue={startDate}
-              endValue={endDate}
-              onChange={(s, e) => {
-                setStartDate(s)
-                setEndDate(e)
-              }}
-              placeholder="기간 선택"
-            />
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Button>검색</Button>
-          <Button variant="secondary">초기화</Button>
-        </div>
-      </div>
-    )
-  },
-}
-
-/**
- * 즉시검색 배치: 키워드 입력이 맨 왼쪽, 이어서 셀렉트·기간검색이 나열되고 버튼은 없다.
- * 순수 배치 참고용이라 실제로 즉시 검색이 실행되는지는 다루지 않는다(그 행동은 패턴/검색의 즉시검색을 본다).
- */
-export const 즉시검색: Story = {
-  render: () => {
-    const [keyword, setKeyword] = useState('')
-    const [category, setCategory] = useState('all')
-    const [status, setStatus] = useState('all')
-    const [startDate, setStartDate] = useState('')
-    const [endDate, setEndDate] = useState('')
-
-    return (
-      <div className="flex flex-wrap items-center gap-2">
-        <div className="w-56">
-          <Input
-            placeholder="키워드 검색..."
-            icon={<Search size={14} />}
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-          />
-        </div>
-        <div className="w-36">
-          <CustomSelect value={category} onChange={setCategory} options={categoryOptions} />
-        </div>
-        <div className="w-36">
-          <CustomSelect value={status} onChange={setStatus} options={statusOptions} />
-        </div>
-        <div className="w-56">
-          <DateRangePicker
-            startValue={startDate}
-            endValue={endDate}
-            onChange={(s, e) => {
-              setStartDate(s)
-              setEndDate(e)
-            }}
-            placeholder="기간 선택"
-          />
         </div>
       </div>
     )

@@ -12,7 +12,8 @@ export interface ModalProps {
 
 /**
  * 공용 상세/편집 모달. 목록(그리드) 행 클릭으로 열어 상세 확인·수정·삭제를 처리할 때 쓴다.
- * 그리드 행 자체에는 삭제 버튼을 두지 않고, 삭제 액션은 이 모달의 footer에 두는 패턴을 권장한다.
+ * footer에는 FormActions를 꽂아써서 취소/제출/삭제 버튼 위치를 통일한다 — 같은 폼을 모달
+ * 대신 페이지로 열 때는 DetailPageLayout을 쓰면 헤더 X 위치/footer 배치가 동일하게 맞는다.
  */
 export function Modal({ open, onClose, title, children, footer }: ModalProps) {
   useEffect(() => {
@@ -34,7 +35,7 @@ export function Modal({ open, onClose, title, children, footer }: ModalProps) {
       }}
     >
       <div className="flex max-h-[85vh] w-full max-w-lg flex-col overflow-hidden rounded border border-[var(--ds-border)] bg-[var(--ds-surface-overlay)] shadow-[var(--ds-shadow-overlay)]">
-        <div className="flex items-center justify-between border-b border-[var(--ds-border)] px-5 py-4">
+        <div className="flex items-center justify-between px-5 py-4">
           <h2 className="text-base font-bold text-[var(--ds-text)]">{title}</h2>
           <button
             type="button"
@@ -48,7 +49,7 @@ export function Modal({ open, onClose, title, children, footer }: ModalProps) {
 
         <div className="flex-1 overflow-y-auto px-5 py-4">{children}</div>
 
-        {footer && <div className="flex items-center justify-between gap-2 border-t border-[var(--ds-border)] px-5 py-4">{footer}</div>}
+        {footer && <div className="flex items-center justify-between gap-2 px-5 py-4">{footer}</div>}
       </div>
     </div>
   )

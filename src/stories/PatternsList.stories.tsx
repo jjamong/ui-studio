@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import type { UIEvent } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { Inbox } from 'lucide-react'
-import { SearchActionBar } from '../components/SearchActionBar'
+import { Button } from '../components/Button'
 import { EmptyState } from '../components/EmptyState'
 import { Table } from '../components/Table'
 import { Badge } from '../components/Badge'
 import { Modal } from '../components/Modal'
 import { Pagination } from '../components/Pagination'
+import { InstantSearchBar } from './SearchBars'
 
 const meta: Meta = {
   title: '패턴/목록',
@@ -17,15 +17,15 @@ export default meta
 
 type Story = StoryObj
 
-interface AssetRow {
+interface ItemRow {
   id: string
   name: string
   category: string
 }
 
-const allRows: AssetRow[] = [
-  { id: '1', name: '강남 오피스텔', category: '부동산' },
-  { id: '2', name: '판교 아파트', category: '부동산' },
+const allRows: ItemRow[] = [
+  { id: '1', name: '시스템 점검 안내', category: '공지' },
+  { id: '2', name: '커뮤니티 이벤트', category: '이벤트' },
 ]
 
 interface UserRow {
@@ -82,10 +82,11 @@ export const 목록페이징: Story = {
 }
 
 /**
- * 목록페이징 위에 검색/필터 영역까지 얹은 완전한 목록 패턴: 검색바 + 그리드 + (총 건수·페이지네이션).
- * 검색바에는 총 건수를 넣지 않는다 — 검색바와 그리드는 붙여서 하나의 덩어리로 보이게 하고,
- * 총 건수는 페이지네이션과 같은 줄, 좌측에 둔다(페이지네이션은 그 줄의 우측에 뭉쳐서 정렬).
- * 검색 결과가 없으면 그리드·하단 줄 대신 EmptyState로 대체한다.
+ * 목록페이징 위에 검색 영역까지 얹은 완전한 목록 패턴: 검색바(패턴/검색의 즉시검색을 그대로
+ * 불러와 씀) + 그리드 + (총 건수·페이지네이션). 검색바와 그리드는 붙여서 하나의 덩어리로 보이게
+ * 하고, 총 건수는 페이지네이션과 같은 줄 좌측에 둔다. 검색 결과가 없어도 그리드 자체는 그대로
+ * 두고(헤더 유지) Table의 emptyMessage 자리에 EmptyState(variant="search")만 넣는다 — 총 건수·
+ * 페이지네이션 줄만 숨긴다.
  */
 export const 목록페이징검색: Story = {
   render: () => {
@@ -99,32 +100,29 @@ export const 목록페이징검색: Story = {
 
     return (
       <div className="flex flex-col gap-2">
-        <SearchActionBar
-          searchPlaceholder="이름으로 검색..."
-          onSearch={(q) => {
-            setQuery(q)
+        <InstantSearchBar
+          keyword={query}
+          onKeywordChange={(value) => {
+            setQuery(value)
             setPage(1)
           }}
+          keywordPlaceholder="이름으로 검색..."
         />
-        {filtered.length === 0 ? (
-          <EmptyState icon={<Inbox size={32} />} title="검색 결과가 없습니다" />
-        ) : (
-          <>
-            <Table<UserRow> columns={userColumns} rows={pageRows} getRowId={(row) => row.id} />
-            <div className="flex items-center justify-between">
-              <span className="text-xs text-[var(--ds-text-subtle)]">총 {filtered.length.toLocaleString()}건</span>
-              <Pagination
-                currentPage={page}
-                totalPages={totalPages}
-                onPageChange={setPage}
-                itemsPerPage={pageSize}
-                onItemsPerPageChange={(size) => {
-                  setPageSize(size)
-                  setPage(1)
-                }}
-              />
-            </div>
-          </>
+        <Table<UserRow> columns={userColumns} rows={pageRows} getRowId={(row) => row.id} emptyMessage={<EmptyState variant="search" />} />
+        {filtered.length > 0 && (
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-[var(--ds-text-subtle)]">총 {filtered.length.toLocaleString()}건</span>
+            <Pagination
+              currentPage={page}
+              totalPages={totalPages}
+              onPageChange={setPage}
+              itemsPerPage={pageSize}
+              onItemsPerPageChange={(size) => {
+                setPageSize(size)
+                setPage(1)
+              }}
+            />
+          </div>
         )}
       </div>
     )
@@ -168,7 +166,10 @@ export const 목록스크롤: Story = {
   },
 }
 
-/** 목록스크롤 위에 검색 영역까지 얹은 패턴: 검색바 + 스크롤 그리드 + 총 건수. */
+/**
+ * 목록스크롤 위에 검색 영역까지 얹은 패턴: 검색바(패턴/검색의 즉시검색을 그대로 불러와 씀) +
+ * 스크롤 그리드 + 총 건수. 결과가 없어도 그리드는 그대로 두고 emptyMessage만 EmptyState(variant="search")로 바꾼다.
+ */
 export const 목록스크롤검색: Story = {
   render: () => {
     const [query, setQuery] = useState('')
@@ -187,27 +188,25 @@ export const 목록스크롤검색: Story = {
 
     return (
       <div className="flex flex-col gap-2">
-        <SearchActionBar
-          searchPlaceholder="이름으로 검색..."
-          onSearch={(q) => {
-            setQuery(q)
+        <InstantSearchBar
+          keyword={query}
+          onKeywordChange={(value) => {
+            setQuery(value)
             setVisibleCount(SCROLL_PAGE_SIZE)
           }}
+          keywordPlaceholder="이름으로 검색..."
         />
-        {filtered.length === 0 ? (
-          <EmptyState icon={<Inbox size={32} />} title="검색 결과가 없습니다" />
-        ) : (
-          <>
-            <Table<UserRow>
-              columns={userColumns}
-              rows={rows}
-              getRowId={(row) => row.id}
-              stickyHeader
-              maxHeightClass="max-h-80"
-              onScroll={handleScroll}
-            />
-            <span className="text-xs text-[var(--ds-text-subtle)]">총 {filtered.length.toLocaleString()}건</span>
-          </>
+        <Table<UserRow>
+          columns={userColumns}
+          rows={rows}
+          getRowId={(row) => row.id}
+          stickyHeader
+          maxHeightClass="max-h-80"
+          onScroll={handleScroll}
+          emptyMessage={<EmptyState variant="search" />}
+        />
+        {filtered.length > 0 && (
+          <span className="text-xs text-[var(--ds-text-subtle)]">총 {filtered.length.toLocaleString()}건</span>
         )}
       </div>
     )
@@ -215,23 +214,41 @@ export const 목록스크롤검색: Story = {
 }
 
 /**
- * 그리드/목록이 비어있을 때의 빈 상태. 검색바는 별도(패턴/검색)에서 다루므로 여기서는 다루지 않고,
- * 데이터가 0건일 때 그리드 자리를 EmptyState로 대체하는 모양 자체만 본다.
+ * 그리드가 비어있는 빈 상태: 그리드 헤더는 그대로 두고 본문 자리(Table의 emptyMessage)에
+ * EmptyState만 불러와 넣는다 — 검색 결과가 없는 경우(variant="search")든 데이터 자체가
+ * 없는 경우(variant="data")든 배치는 완전히 같고 EmptyState의 variant만 다르다. 위 토글로
+ * variant를 바꿔가며 확인한다. 검색바 자체는 패턴/검색에서 다루므로 여기서는 다루지 않는다.
  */
-export const 빈검색결과: Story = {
-  render: () => <EmptyState icon={<Inbox size={32} />} title="검색 결과가 없습니다" />,
+export const 빈내용: Story = {
+  render: () => {
+    const [variant, setVariant] = useState<'search' | 'data'>('data')
+
+    return (
+      <div className="flex flex-col gap-3">
+        <div className="flex gap-2">
+          <Button size="sm" variant={variant === 'data' ? 'primary' : 'secondary'} onClick={() => setVariant('data')}>
+            데이터 없음
+          </Button>
+          <Button size="sm" variant={variant === 'search' ? 'primary' : 'secondary'} onClick={() => setVariant('search')}>
+            검색 결과 없음
+          </Button>
+        </div>
+        <Table<UserRow> columns={userColumns} rows={[]} getRowId={(row) => row.id} emptyMessage={<EmptyState variant={variant} />} />
+      </div>
+    )
+  },
 }
 
 /** Table 행 클릭으로 Modal 상세를 여는 목록-상세 패턴. */
 export const 목록상세: Story = {
   render: () => {
-    const [selected, setSelected] = useState<AssetRow | null>(null)
+    const [selected, setSelected] = useState<ItemRow | null>(null)
 
     return (
       <>
-        <Table<AssetRow>
+        <Table<ItemRow>
           columns={[
-            { key: 'name', header: '자산명', render: (row) => row.name },
+            { key: 'name', header: '이름', render: (row) => row.name },
             { key: 'category', header: '종류', render: (row) => <Badge variant="brand">{row.category}</Badge> },
           ]}
           rows={allRows}

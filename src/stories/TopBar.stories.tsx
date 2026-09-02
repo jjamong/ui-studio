@@ -7,7 +7,7 @@ const meta: Meta<typeof TopBar> = {
   component: TopBar,
   args: {
     logo: <div className="h-5 w-5 rounded bg-[var(--ds-background-brand-bold)]" />,
-    title: 'jjamong asset-studio',
+    title: 'Design System',
   },
   parameters: { layout: 'fullscreen' },
 }

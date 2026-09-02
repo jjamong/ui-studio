@@ -6,28 +6,28 @@ import type { TreeNode } from '../components/Tree'
 
 const data: TreeNode[] = [
   {
-    id: 'real-estate',
-    label: '부동산',
+    id: 'notice',
+    label: '공지사항',
     children: [
-      { id: 're-1', label: '강남 오피스텔' },
-      { id: 're-2', label: '판교 아파트' },
+      { id: 'notice-1', label: '시스템 점검 안내' },
+      { id: 'notice-2', label: '이용약관 개정 안내' },
     ],
   },
   {
-    id: 'cash',
-    label: '현금성 자산',
+    id: 'user',
+    label: '사용자',
     children: [
-      { id: 'cash-1', label: '입출금 통장' },
-      { id: 'cash-2', label: '예금' },
+      { id: 'user-1', label: '관리자' },
+      { id: 'user-2', label: '일반회원' },
     ],
   },
-  { id: 'stock', label: '주식', disabled: true },
+  { id: 'setting', label: '설정', disabled: true },
 ]
 
 const meta: Meta<typeof Tree> = {
   title: '컴포넌트/Tree',
   component: Tree,
-  args: { data, defaultExpandedIds: ['real-estate'] },
+  args: { data, defaultExpandedIds: ['notice'] },
   argTypes: {
     mode: { control: 'select', options: ['default', 'selectable', 'checkable'] },
     size: { control: 'select', options: ['default', 'small'] },
@@ -42,7 +42,7 @@ export const Default: Story = {}
 export const Selectable: Story = {
   args: { mode: 'selectable' },
   render: (args) => {
-    const [selectedId, setSelectedId] = useState('re-1')
+    const [selectedId, setSelectedId] = useState('notice-1')
     return <Tree {...args} selectedId={selectedId} onSelect={(id) => setSelectedId(id)} />
   },
 }
@@ -50,7 +50,7 @@ export const Selectable: Story = {
 export const Checkable: Story = {
   args: { mode: 'checkable' },
   render: (args) => {
-    const [checkedIds, setCheckedIds] = useState<string[]>(['re-1'])
+    const [checkedIds, setCheckedIds] = useState<string[]>(['notice-1'])
     return <Tree {...args} checkedIds={checkedIds} onCheckedChange={setCheckedIds} />
   },
 }

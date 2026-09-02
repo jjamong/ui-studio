@@ -61,6 +61,15 @@ export type { LoadingSpinnerProps } from './components/LoadingSpinner'
 export { Modal } from './components/Modal'
 export type { ModalProps } from './components/Modal'
 
+export { FormActions } from './components/FormActions'
+export type { FormActionsProps } from './components/FormActions'
+
+export { DetailPageLayout } from './components/DetailPageLayout'
+export type { DetailPageLayoutProps } from './components/DetailPageLayout'
+
+export { SectionSkeleton } from './components/SectionSkeleton'
+export type { SectionSkeletonProps } from './components/SectionSkeleton'
+
 export { Toast } from './components/Toast'
 export type { ToastProps, ToastMessage } from './components/Toast'
 
@@ -95,7 +104,10 @@ export { Card } from './components/Card'
 export type { CardProps } from './components/Card'
 
 export { EmptyState } from './components/EmptyState'
-export type { EmptyStateProps } from './components/EmptyState'
+export type { EmptyStateProps, EmptyStateVariant } from './components/EmptyState'
+
+export { DetailRows } from './components/DetailRows'
+export type { DetailRow, DetailRowsProps } from './components/DetailRows'
 
 export { Accordion } from './components/Accordion'
 export type { AccordionProps, AccordionItem } from './components/Accordion'
@@ -108,6 +120,9 @@ export type { TooltipProps, TooltipPlacement } from './components/Tooltip'
 
 export { Popover } from './components/Popover'
 export type { PopoverProps, PopoverPlacement } from './components/Popover'
+
+export { AppSwitcher } from './components/AppSwitcher'
+export type { AppSwitcherProps, AppSwitcherItem } from './components/AppSwitcher'
 
 export { DropdownMenu } from './components/DropdownMenu'
 export type { DropdownMenuProps, DropdownMenuItem, DropdownMenuPlacement } from './components/DropdownMenu'

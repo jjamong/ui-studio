@@ -2,8 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { Accordion } from '../components/Accordion'
 
 const items = [
-  { id: 'a', title: '부동산이란?', content: '토지 및 그 정착물을 말합니다.' },
-  { id: 'b', title: '현금성 자산이란?', content: '즉시 현금화 가능한 자산입니다.' },
+  { id: 'a', title: '공지사항이란?', content: '서비스 이용자에게 전달하는 안내 메시지를 말합니다.' },
+  { id: 'b', title: '사용자란?', content: '서비스에 가입한 계정을 말합니다.' },
   { id: 'c', title: '비활성 항목', content: '', disabled: true },
 ]
 
