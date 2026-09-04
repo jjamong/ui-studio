@@ -141,3 +141,12 @@ export type { DropdownMenuProps, DropdownMenuItem, DropdownMenuPlacement } from 
 
 export { ToastProvider, useToast } from './components/ToastProvider'
 export type { ToastOptions } from './components/ToastProvider'
+
+export { TrendBadge } from './components/TrendBadge'
+export type { TrendBadgeProps, TrendDirection } from './components/TrendBadge'
+
+export { StatTile } from './components/StatTile'
+export type { StatTileProps, StatTileTrend } from './components/StatTile'
+
+export { Meter } from './components/Meter'
+export type { MeterProps, MeterVariant } from './components/Meter'
