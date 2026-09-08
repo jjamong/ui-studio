@@ -1,6 +1,6 @@
 {
   "name": "ui-studio",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "jjamong 공용 UI 컴포넌트 킷. 컴포넌트는 디자인 토큰(CSS 변수) 이름만 참조하고 값은 갖지 않는다 — 각 소비 프로젝트가 자기 테마 값으로 --ds-*, --text-* 변수를 정의해서 사용한다.",
   "private": false,
   "type": "module",
