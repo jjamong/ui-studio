@@ -36,6 +36,8 @@ export interface DateRangePickerProps {
   maxDate?: string
   /** 값 지우기 버튼 노출 여부. 기본 true */
   clearable?: boolean
+  /** true면 인풋에 직접 타이핑할 수 없고 팝업에서 날짜를 클릭해서만 고른다. 기본 false(타이핑 가능). */
+  readOnly?: boolean
   className?: string
 }
 
@@ -45,7 +47,7 @@ const sizeClass: Record<DateRangePickerSize, string> = {
   lg: 'h-9 px-3 text-base',
 }
 
-/** 시작~종료 날짜를 하나의 인풋에서 고르는 기간 선택기. 팝업에서 두 달을 동시에 보여주고 시작일→종료일 순서로 클릭한다. */
+/** 시작~종료 날짜를 하나의 인풋에서 고르는 기간 선택기. 시작/종료 칸에 직접 타이핑하거나, 팝업에서 두 달을 동시에 보여주고 시작일→종료일 순서로 클릭해서 고른다. */
 export function DateRangePicker({
   startValue = '',
   endValue = '',
@@ -59,6 +61,7 @@ export function DateRangePicker({
   minDate,
   maxDate,
   clearable = true,
+  readOnly = false,
   className,
 }: DateRangePickerProps) {
   const inputId = useId()
@@ -72,11 +75,19 @@ export function DateRangePicker({
   const [hoverDate, setHoverDate] = useState<Date | null>(null)
   /** 새로 고르는 중인 시작일. null이면 committed된 start/end를 그대로 보여준다. */
   const [selectingStart, setSelectingStart] = useState<Date | null>(null)
+  const [draftStart, setDraftStart] = useState(startValue)
+  const [draftEnd, setDraftEnd] = useState(endValue)
 
   useEffect(() => {
+    setDraftStart(startValue)
     if (start) setLeftView(start)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startValue])
+
+  useEffect(() => {
+    setDraftEnd(endValue)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [endValue])
 
   const { refs, floatingStyles, context } = useFloating({
     open,
@@ -107,9 +118,35 @@ export function DateRangePicker({
     setOpen(false)
   }
 
+  function commitStart(raw: string) {
+    const parsed = parseDigits(raw, format)
+    if (parsed) {
+      const formatted = formatDate(parsed, format)
+      setDraftStart(formatted)
+      onChange(formatted, endValue)
+      setLeftView(parsed)
+    } else {
+      setDraftStart(startValue)
+    }
+  }
+
+  function commitEnd(raw: string) {
+    const parsed = parseDigits(raw, format)
+    if (parsed) {
+      const formatted = formatDate(parsed, format)
+      setDraftEnd(formatted)
+      onChange(startValue, formatted)
+      setLeftView(addMonths(parsed, -1))
+    } else {
+      setDraftEnd(endValue)
+    }
+  }
+
   function handleClear(event: MouseEvent) {
     event.stopPropagation()
     setSelectingStart(null)
+    setDraftStart('')
+    setDraftEnd('')
     onChange('', '')
   }
 
@@ -117,7 +154,6 @@ export function DateRangePicker({
   const rangeStart = selectingStart ?? start
   const rangeEnd = selectingStart ? null : end
   const previewEnd = selectingStart ? hoverDate : null
-  const displayText = rangeStart && rangeEnd ? `${formatDate(rangeStart, format)} ~ ${formatDate(rangeEnd, format)}` : rangeStart ? `${formatDate(rangeStart, format)} ~` : ''
 
   return (
     <div className="flex w-full flex-col gap-1">
@@ -126,23 +162,57 @@ export function DateRangePicker({
           {label}
         </label>
       )}
-      <div className="relative flex items-center" ref={refs.setReference} {...getReferenceProps()}>
+      <div
+        className={clsx(
+          'relative flex w-full items-center gap-1 rounded border border-[var(--ds-border)] bg-[var(--ds-surface)] pr-8 text-[var(--ds-text)] transition-colors focus-within:border-[var(--ds-border-focused)] has-[:disabled]:cursor-not-allowed has-[:disabled]:bg-[var(--ds-background-disabled)] has-[:disabled]:text-[var(--ds-text-disabled)]',
+          sizeClass[size],
+          clearable && (draftStart || draftEnd) && 'pr-14',
+          error && 'border-[var(--ds-border-danger)] focus-within:border-[var(--ds-border-danger)]',
+          readOnly && 'cursor-pointer',
+          className,
+        )}
+        ref={refs.setReference}
+        {...getReferenceProps()}
+      >
         <input
           id={inputId}
-          readOnly
           disabled={disabled}
-          value={displayText}
-          placeholder={placeholder ?? `${format} ~ ${format}`}
+          readOnly={readOnly}
+          value={draftStart}
+          placeholder={placeholder ?? format}
+          onChange={(e) => setDraftStart(e.target.value)}
+          onBlur={(e) => commitStart(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              commitStart((e.target as HTMLInputElement).value)
+              setOpen(false)
+            }
+          }}
           className={clsx(
-            'w-full rounded border border-[var(--ds-border)] bg-[var(--ds-surface)] pr-8 text-[var(--ds-text)] outline-none transition-colors placeholder:text-[var(--ds-text-subtlest)] focus:border-[var(--ds-border-focused)] disabled:cursor-not-allowed disabled:bg-[var(--ds-background-disabled)] disabled:text-[var(--ds-text-disabled)]',
-            !disabled && 'cursor-pointer',
-            sizeClass[size],
-            clearable && displayText && 'pr-14',
-            error && 'border-[var(--ds-border-danger)] focus:border-[var(--ds-border-danger)]',
-            className,
+            'w-0 min-w-0 flex-1 bg-transparent outline-none placeholder:text-[var(--ds-text-subtlest)] disabled:cursor-not-allowed',
+            readOnly && 'cursor-pointer',
           )}
         />
-        {clearable && displayText && !disabled && (
+        <span className="text-[var(--ds-text-subtlest)]">~</span>
+        <input
+          disabled={disabled}
+          readOnly={readOnly}
+          value={draftEnd}
+          placeholder={placeholder ?? format}
+          onChange={(e) => setDraftEnd(e.target.value)}
+          onBlur={(e) => commitEnd(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              commitEnd((e.target as HTMLInputElement).value)
+              setOpen(false)
+            }
+          }}
+          className={clsx(
+            'w-0 min-w-0 flex-1 bg-transparent text-right outline-none placeholder:text-[var(--ds-text-subtlest)] disabled:cursor-not-allowed',
+            readOnly && 'cursor-pointer',
+          )}
+        />
+        {clearable && (draftStart || draftEnd) && !disabled && (
           <button
             type="button"
             onClick={handleClear}

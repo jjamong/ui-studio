@@ -1,8 +1,10 @@
+import { useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { clsx } from 'clsx'
-import { addMonths, getCalendarMatrix, isAfterDay, isBeforeDay, isSameDay, isWithinRange } from '../utils/date'
+import { addMonths, addYears, getCalendarMatrix, isAfterDay, isBeforeDay, isSameDay, isWithinRange } from '../utils/date'
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토']
+const MONTHS = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월']
 
 export interface CalendarProps {
   viewDate: Date
@@ -34,10 +36,60 @@ export function Calendar({
   minDate,
   maxDate,
 }: CalendarProps) {
+  const [mode, setMode] = useState<'days' | 'months'>('days')
   const days = getCalendarMatrix(viewDate)
   const today = new Date()
   const rangeVisibleEnd = rangeEnd ?? previewEnd ?? null
   const hasRange = Boolean(rangeStart && rangeVisibleEnd && !isAfterDay(rangeStart, rangeVisibleEnd))
+
+  if (mode === 'months') {
+    return (
+      <div className="w-64 p-3">
+        <div className="mb-2 flex items-center justify-between">
+          <button
+            type="button"
+            onClick={() => onViewDateChange(addYears(viewDate, -1))}
+            className="rounded p-1 text-[var(--ds-text-subtle)] transition-colors hover:bg-[var(--ds-background-neutral-hovered)]"
+            aria-label="이전 해"
+          >
+            <ChevronLeft size={16} />
+          </button>
+          <span className="text-sm font-semibold text-[var(--ds-text)]">{viewDate.getFullYear()}년</span>
+          <button
+            type="button"
+            onClick={() => onViewDateChange(addYears(viewDate, 1))}
+            className="rounded p-1 text-[var(--ds-text-subtle)] transition-colors hover:bg-[var(--ds-background-neutral-hovered)]"
+            aria-label="다음 해"
+          >
+            <ChevronRight size={16} />
+          </button>
+        </div>
+        <div className="grid grid-cols-3 gap-1">
+          {MONTHS.map((label, index) => {
+            const isCurrentMonth = viewDate.getMonth() === index
+            return (
+              <button
+                key={label}
+                type="button"
+                onClick={() => {
+                  onViewDateChange(new Date(viewDate.getFullYear(), index, 1))
+                  setMode('days')
+                }}
+                className={clsx(
+                  'rounded py-2 text-xs transition-colors',
+                  isCurrentMonth
+                    ? 'bg-[var(--ds-background-brand-bold)] font-semibold text-[var(--ds-text-inverse)]'
+                    : 'text-[var(--ds-text)] hover:bg-[var(--ds-background-neutral-hovered)]',
+                )}
+              >
+                {label}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="w-64 p-3">
@@ -50,9 +102,13 @@ export function Calendar({
         >
           <ChevronLeft size={16} />
         </button>
-        <span className="text-sm font-semibold text-[var(--ds-text)]">
+        <button
+          type="button"
+          onClick={() => setMode('months')}
+          className="rounded px-1.5 py-0.5 text-sm font-semibold text-[var(--ds-text)] transition-colors hover:bg-[var(--ds-background-neutral-hovered)]"
+        >
           {viewDate.getFullYear()}년 {viewDate.getMonth() + 1}월
-        </span>
+        </button>
         <button
           type="button"
           onClick={() => onViewDateChange(addMonths(viewDate, 1))}

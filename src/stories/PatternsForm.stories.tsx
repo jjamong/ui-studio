@@ -6,6 +6,7 @@ import { TextArea } from '../components/TextArea'
 import { Button } from '../components/Button'
 import { Modal } from '../components/Modal'
 import { ToastProvider, useToast } from '../components/ToastProvider'
+import { DatePicker } from '../components/DatePicker'
 
 const meta: Meta = {
   title: '패턴/폼',
@@ -161,4 +162,27 @@ export const 폼검증: Story = {
       <폼검증Demo />
     </ToastProvider>
   ),
+}
+
+/**
+ * 기간검색: 시작일/종료일을 테두리가 분리된 독립 DatePicker 두 개로 나눠 받는다.
+ * 각자 직접 타이핑도 가능하고, 서로의 min/max를 맞물려서(시작일의 maxDate=종료일,
+ * 종료일의 minDate=시작일) 시작일이 종료일보다 뒤로 가거나 그 반대가 되는 걸 막는다.
+ */
+export const 기간검색: Story = {
+  render: () => {
+    const [start, setStart] = useState('20260901')
+    const [end, setEnd] = useState('20260930')
+
+    return (
+      <div className="flex w-96 flex-col gap-1">
+        <span className="text-xs font-semibold text-[var(--ds-text-subtle)]">조회 기간</span>
+        <div className="flex items-center gap-2">
+          <DatePicker value={start} onChange={setStart} maxDate={end || undefined} />
+          <span className="text-[var(--ds-text-subtlest)]">~</span>
+          <DatePicker value={end} onChange={setEnd} minDate={start || undefined} />
+        </div>
+      </div>
+    )
+  },
 }

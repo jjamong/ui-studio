@@ -145,6 +145,9 @@ export type { ToastOptions } from './components/ToastProvider'
 export { TrendBadge } from './components/TrendBadge'
 export type { TrendBadgeProps, TrendDirection } from './components/TrendBadge'
 
+export { TrendText } from './components/TrendText'
+export type { TrendTextProps } from './components/TrendText'
+
 export { StatTile } from './components/StatTile'
 export type { StatTileProps, StatTileTrend } from './components/StatTile'
 

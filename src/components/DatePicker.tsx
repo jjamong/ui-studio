@@ -33,6 +33,8 @@ export interface DatePickerProps {
   maxDate?: string
   /** 값 지우기 버튼 노출 여부. 기본 true */
   clearable?: boolean
+  /** true면 인풋에 직접 타이핑할 수 없고 팝업에서 날짜를 클릭해서만 고른다. 기본 false(타이핑 가능). */
+  readOnly?: boolean
   className?: string
 }
 
@@ -55,6 +57,7 @@ export function DatePicker({
   minDate,
   maxDate,
   clearable = true,
+  readOnly = false,
   className,
 }: DatePickerProps) {
   const inputId = useId()
@@ -76,7 +79,6 @@ export function DatePicker({
     open,
     onOpenChange: (next: boolean) => {
       setOpen(next)
-      if (!next) setDraft(value)
     },
     placement: 'bottom-start',
     middleware: [offset(6), flip(), shift({ padding: 8 })],
@@ -118,6 +120,7 @@ export function DatePicker({
         <input
           id={inputId}
           disabled={disabled}
+          readOnly={readOnly}
           value={draft}
           placeholder={placeholder ?? format}
           onChange={(e) => setDraft(e.target.value)}
@@ -131,6 +134,7 @@ export function DatePicker({
           className={clsx(
             'w-full rounded border border-[var(--ds-border)] bg-[var(--ds-surface)] pr-8 text-[var(--ds-text)] outline-none transition-colors placeholder:text-[var(--ds-text-subtlest)] focus:border-[var(--ds-border-focused)] disabled:cursor-not-allowed disabled:bg-[var(--ds-background-disabled)] disabled:text-[var(--ds-text-disabled)]',
             sizeClass[size],
+            readOnly && 'cursor-pointer',
             clearable && draft && 'pr-14',
             error && 'border-[var(--ds-border-danger)] focus:border-[var(--ds-border-danger)]',
             className,

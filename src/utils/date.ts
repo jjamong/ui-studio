@@ -75,6 +75,13 @@ export function addMonths(date: Date, amount: number): Date {
   return d
 }
 
+export function addYears(date: Date, amount: number): Date {
+  const d = new Date(date)
+  d.setDate(1)
+  d.setFullYear(d.getFullYear() + amount)
+  return d
+}
+
 export function addDays(date: Date, amount: number): Date {
   const d = new Date(date)
   d.setDate(d.getDate() + amount)
