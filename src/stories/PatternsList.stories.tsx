@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Plus } from 'lucide-react'
 import type { UIEvent } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { Button } from '../components/Button'
@@ -7,6 +8,8 @@ import { Table } from '../components/Table'
 import { Badge } from '../components/Badge'
 import { Modal } from '../components/Modal'
 import { Pagination } from '../components/Pagination'
+import { Card } from '../components/Card'
+import { SortableList } from '../components/SortableList'
 import { InstantSearchBar } from './SearchBars'
 
 const meta: Meta = {
@@ -259,6 +262,90 @@ export const 목록상세: Story = {
           <p className="text-sm text-[var(--ds-text)]">종류: {selected?.category}</p>
         </Modal>
       </>
+    )
+  },
+}
+
+interface OrderedRow {
+  id: string
+  name: string
+  summary: string
+  category: string
+}
+
+const orderedRows: OrderedRow[] = [
+  { id: '1', name: '시스템 점검 안내', summary: '정기 점검으로 일부 기능 이용이 제한됩니다.', category: '공지' },
+  { id: '2', name: '이용약관 개정 안내', summary: '개정된 약관은 다음 달 1일부터 적용됩니다.', category: '공지' },
+  { id: '3', name: '커뮤니티 이벤트', summary: '참여자 중 추첨을 통해 기념품을 드립니다.', category: '이벤트' },
+  { id: '4', name: '신규 기능 소개', summary: '목록 순서를 드래그로 바꿀 수 있습니다.', category: '안내' },
+]
+
+/**
+ * 순서가 의미 있는 목록(메뉴 순서, 챕터 순서 등)을 드래그로 재정렬하는 패턴: Card(제목+건수, 추가 버튼) 안에
+ * SortableList. 드롭 즉시 화면 순서를 먼저 바꾸고(낙관적 갱신) 저장을 요청하며, 저장 중에는 disabled로 추가
+ * 이동을 막는다. 저장이 실패하면 이전 순서로 되돌린다 — 아래 스위치로 실패를 흉내 낼 수 있다.
+ * 행 본문(이름)은 링크/버튼이어도 되고, 드래그는 왼쪽 손잡이로만 시작된다.
+ */
+export const 목록순서변경: Story = {
+  render: () => {
+    const [rows, setRows] = useState(orderedRows)
+    const [saving, setSaving] = useState(false)
+    const [failSave, setFailSave] = useState(false)
+
+    function handleReorder(next: OrderedRow[]) {
+      const prev = rows
+      setRows(next)
+      setSaving(true)
+      // 실제로는 여기서 새 순서(id 목록)를 서버에 저장한다
+      setTimeout(() => {
+        if (failSave) setRows(prev)
+        setSaving(false)
+      }, 600)
+    }
+
+    return (
+      <div className="flex max-w-lg flex-col gap-3">
+        <div className="flex gap-2">
+          <Button size="sm" variant={failSave ? 'secondary' : 'primary'} onClick={() => setFailSave(false)}>
+            저장 성공
+          </Button>
+          <Button size="sm" variant={failSave ? 'primary' : 'secondary'} onClick={() => setFailSave(true)}>
+            저장 실패
+          </Button>
+        </div>
+        <Card
+          title={
+            <>
+              공지사항 <span className="font-normal text-[var(--ds-text-subtlest)]">{rows.length}</span>
+            </>
+          }
+          actions={
+            <Button variant="secondary" size="sm" icon={<Plus size={12} />}>
+              추가
+            </Button>
+          }
+        >
+          {rows.length === 0 ? (
+            <EmptyState variant="data" />
+          ) : (
+            <SortableList
+              items={rows}
+              getId={(row) => row.id}
+              onReorder={handleReorder}
+              disabled={saving}
+              renderItem={(row) => (
+                <div className="flex flex-col gap-0.5">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium text-[var(--ds-text)]">{row.name}</span>
+                    <Badge variant="neutral">{row.category}</Badge>
+                  </div>
+                  <p className="line-clamp-2 text-xs text-[var(--ds-text-subtle)]">{row.summary}</p>
+                </div>
+              )}
+            />
+          )}
+        </Card>
+      </div>
     )
   },
 }

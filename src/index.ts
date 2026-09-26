@@ -52,6 +52,9 @@ export type { TreeProps, TreeNode, TreeMode, TreeSize } from './components/Tree'
 export { DraggableTree } from './components/DraggableTree'
 export type { DraggableTreeProps, DropPosition } from './components/DraggableTree'
 
+export { SortableList } from './components/SortableList'
+export type { SortableListProps } from './components/SortableList'
+
 export { Skeleton } from './components/Skeleton'
 export type { SkeletonProps } from './components/Skeleton'
 
