@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { ReactNode } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { clsx } from 'clsx'
+import { Collapse } from './Collapse'
 
 export interface AccordionItem {
   id: string
@@ -56,7 +57,9 @@ export function Accordion({ items, multiple = false, defaultExpandedIds = [] }: 
                 className={clsx('shrink-0 text-[var(--ds-text-subtle)] transition-transform', isOpen && 'rotate-180')}
               />
             </button>
-            {isOpen && <div className="px-4 pb-3 text-sm text-[var(--ds-text-subtle)]">{item.content}</div>}
+            <Collapse open={isOpen} className="px-4 pb-3 text-sm text-[var(--ds-text-subtle)]">
+              {item.content}
+            </Collapse>
           </div>
         )
       })}

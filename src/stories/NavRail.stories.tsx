@@ -47,3 +47,32 @@ export const Collapsed: Story = {
     </div>
   ),
 }
+
+const groupedItems = [
+  { key: 'home', label: '홈', icon: <Home size={16} /> },
+  {
+    key: 'board',
+    label: '게시판',
+    items: [{ key: 'notice', label: '공지사항', icon: <Megaphone size={16} />, active: true }],
+  },
+  {
+    key: 'admin',
+    label: '관리',
+    items: [
+      { key: 'user', label: '사용자', icon: <Users size={16} /> },
+      { key: 'settings', label: '설정', icon: <Settings size={16} /> },
+    ],
+  },
+]
+
+/** `items`에 `{ key, label, items }` 그룹을 섞으면 제목이 달린 섹션으로 묶인다. */
+export const Grouped: Story = {
+  args: { items: groupedItems },
+  render: Playground.render,
+}
+
+/** `collapsibleSections`를 켜면 섹션 제목을 눌러 섹션을 접고 펼 수 있다. */
+export const GroupedCollapsible: Story = {
+  args: { items: groupedItems, collapsibleSections: true },
+  render: Playground.render,
+}

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { PiggyBank, TrendingUp, Wallet } from 'lucide-react'
+import { Eye, UserPlus, Users } from 'lucide-react'
 import { StatTile } from '../components/StatTile'
 import { Meter } from '../components/Meter'
 import { Card } from '../components/Card'
@@ -18,29 +18,29 @@ export const 대시보드요약: Story = {
     <div className="flex w-full max-w-3xl flex-col gap-4">
       <div className="grid grid-cols-3 gap-3">
         <StatTile
-          label="총 자산"
-          value="₩128,420,000"
+          label="전체 사용자"
+          value="12,842명"
           description="전월 대비"
-          icon={<Wallet size={16} />}
+          icon={<Users size={16} />}
           trend={{ direction: 'up', value: '+2.4%' }}
         />
         <StatTile
-          label="이번 달 저축액"
-          value="₩1,850,000"
+          label="이번 달 신규 가입"
+          value="185명"
           description="목표 대비"
-          icon={<PiggyBank size={16} />}
+          icon={<UserPlus size={16} />}
           trend={{ direction: 'down', value: '-6.0%' }}
         />
         <StatTile
-          label="수익률"
-          value="+14.2%"
-          description="연초 대비"
-          icon={<TrendingUp size={16} />}
-          trend={{ direction: 'up', value: '+1.8%p' }}
+          label="공지사항 조회수"
+          value="4,210회"
+          description="전주 대비"
+          icon={<Eye size={16} />}
+          trend={{ direction: 'up', value: '+1.8%' }}
         />
       </div>
-      <Card title="이번 달 저축 목표">
-        <Meter value={74} label="₩1,850,000 / ₩2,500,000" variant="brand" showValue />
+      <Card title="이번 달 신규 가입 목표">
+        <Meter value={74} label="185명 / 250명" variant="brand" showValue />
       </Card>
     </div>
   ),

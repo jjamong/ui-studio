@@ -82,8 +82,11 @@ export type { ToastProps, ToastMessage } from './components/Toast'
 export { RouteLoadingBar } from './components/RouteLoadingBar'
 export type { RouteLoadingBarProps } from './components/RouteLoadingBar'
 
+export { Collapse } from './components/Collapse'
+export type { CollapseProps } from './components/Collapse'
+
 export { NavRail } from './components/NavRail'
-export type { NavRailProps, NavRailItem } from './components/NavRail'
+export type { NavRailProps, NavRailItem, NavRailGroup, NavRailEntry } from './components/NavRail'
 
 export { TopBar } from './components/TopBar'
 export type { TopBarProps } from './components/TopBar'
