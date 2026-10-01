@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { Plus } from 'lucide-react'
 import type { UIEvent } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { Button } from '../components/Button'
@@ -8,8 +7,6 @@ import { Table } from '../components/Table'
 import { Badge } from '../components/Badge'
 import { Modal } from '../components/Modal'
 import { Pagination } from '../components/Pagination'
-import { Card } from '../components/Card'
-import { SortableList } from '../components/SortableList'
 import { InstantSearchBar } from './SearchBars'
 
 const meta: Meta = {
@@ -273,78 +270,93 @@ interface OrderedRow {
   category: string
 }
 
-const orderedRows: OrderedRow[] = [
-  { id: '1', name: '시스템 점검 안내', summary: '정기 점검으로 일부 기능 이용이 제한됩니다.', category: '공지' },
-  { id: '2', name: '이용약관 개정 안내', summary: '개정된 약관은 다음 달 1일부터 적용됩니다.', category: '공지' },
-  { id: '3', name: '커뮤니티 이벤트', summary: '참여자 중 추첨을 통해 기념품을 드립니다.', category: '이벤트' },
-  { id: '4', name: '신규 기능 소개', summary: '목록 순서를 드래그로 바꿀 수 있습니다.', category: '안내' },
+const noticeRows: OrderedRow[] = Array.from({ length: 23 }, (_, i) => ({
+  id: String(i + 1),
+  name: `공지사항 ${i + 1}`,
+  summary: `${i + 1}번째로 노출되는 공지입니다.`,
+  category: i % 4 === 0 ? '이벤트' : '공지',
+}))
+
+const noticeColumns = [
+  { key: 'name', header: '이름', render: (row: OrderedRow) => <span className="font-medium">{row.name}</span> },
+  {
+    key: 'category',
+    header: '종류',
+    render: (row: OrderedRow) => <Badge variant={row.category === '이벤트' ? 'brand' : 'neutral'}>{row.category}</Badge>,
+  },
+  { key: 'summary', header: '요약', render: (row: OrderedRow) => <span className="text-[var(--ds-text-subtle)]">{row.summary}</span> },
 ]
 
 /**
- * 순서가 의미 있는 목록(메뉴 순서, 챕터 순서 등)을 드래그로 재정렬하는 패턴: Card(제목+건수, 추가 버튼) 안에
- * SortableList. 드롭 즉시 화면 순서를 먼저 바꾸고(낙관적 갱신) 저장을 요청하며, 저장 중에는 disabled로 추가
- * 이동을 막는다. 저장이 실패하면 이전 순서로 되돌린다 — 아래 스위치로 실패를 흉내 낼 수 있다.
- * 행 본문(이름)은 링크/버튼이어도 되고, 드래그는 왼쪽 손잡이로만 시작된다.
+ * 목록페이징검색 화면을 그대로 둔 채 그리드 행을 끌어 순서를 바꾸는 패턴: 검색바 + Table(onReorder) + (총 건수·페이지네이션).
+ * - 순서 변경은 현재 페이지 안에서 이뤄지고, 호출부가 그 결과를 전체 목록의 같은 구간에 끼워 넣어 저장한다.
+ * - 검색어가 있으면 일부 행만 보여서 "어디 사이로 옮겼는지"가 모호해진다 — reorderDisabled로 손잡이를 막고 안내 문구를 띄운다.
+ * - 저장: 낙관적 갱신 → 저장 중 비활성 → 실패 시 이전 순서로 롤백.
+ * 행 클릭(상세 이동)은 그대로 동작하고, 손잡이 클릭은 행 클릭으로 번지지 않는다.
  */
-export const 목록순서변경: Story = {
+export const 목록순서변경페이징: Story = {
   render: () => {
-    const [rows, setRows] = useState(orderedRows)
+    const [all, setAll] = useState(noticeRows)
+    const [query, setQuery] = useState('')
+    const [page, setPage] = useState(1)
+    const [pageSize, setPageSize] = useState(10)
     const [saving, setSaving] = useState(false)
-    const [failSave, setFailSave] = useState(false)
+    const [selected, setSelected] = useState<OrderedRow | null>(null)
 
-    function handleReorder(next: OrderedRow[]) {
-      const prev = rows
-      setRows(next)
+    const searching = query !== ''
+    const filtered = searching ? all.filter((r) => r.name.includes(query)) : all
+    const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize))
+    const start = (page - 1) * pageSize
+    const pageRows = filtered.slice(start, start + pageSize)
+
+    function handleReorder(nextPage: OrderedRow[]) {
+      // 바뀐 건 현재 페이지 구간뿐이다 — 전체 목록의 같은 자리에 새 순서를 끼워 넣는다
+      setAll([...all.slice(0, start), ...nextPage, ...all.slice(start + nextPage.length)])
       setSaving(true)
-      // 실제로는 여기서 새 순서(id 목록)를 서버에 저장한다
-      setTimeout(() => {
-        if (failSave) setRows(prev)
-        setSaving(false)
-      }, 600)
+      // 실제로는 여기서 새 순서(id 목록)를 서버에 저장하고, 실패하면 이전 all로 되돌린다
+      setTimeout(() => setSaving(false), 600)
     }
 
     return (
-      <div className="flex max-w-lg flex-col gap-3">
-        <div className="flex gap-2">
-          <Button size="sm" variant={failSave ? 'secondary' : 'primary'} onClick={() => setFailSave(false)}>
-            저장 성공
-          </Button>
-          <Button size="sm" variant={failSave ? 'primary' : 'secondary'} onClick={() => setFailSave(true)}>
-            저장 실패
-          </Button>
+      <div className="flex flex-col gap-2">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <InstantSearchBar
+            keyword={query}
+            onKeywordChange={(value) => {
+              setQuery(value)
+              setPage(1)
+            }}
+            keywordPlaceholder="이름으로 검색..."
+          />
+          {searching && <span className="text-xs text-[var(--ds-text-subtlest)]">검색 중에는 순서를 바꿀 수 없습니다.</span>}
         </div>
-        <Card
-          title={
-            <>
-              공지사항 <span className="font-normal text-[var(--ds-text-subtlest)]">{rows.length}</span>
-            </>
-          }
-          actions={
-            <Button variant="secondary" size="sm" icon={<Plus size={12} />}>
-              추가
-            </Button>
-          }
-        >
-          {rows.length === 0 ? (
-            <EmptyState variant="data" />
-          ) : (
-            <SortableList
-              items={rows}
-              getId={(row) => row.id}
-              onReorder={handleReorder}
-              disabled={saving}
-              renderItem={(row) => (
-                <div className="flex flex-col gap-0.5">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-[var(--ds-text)]">{row.name}</span>
-                    <Badge variant="neutral">{row.category}</Badge>
-                  </div>
-                  <p className="line-clamp-2 text-xs text-[var(--ds-text-subtle)]">{row.summary}</p>
-                </div>
-              )}
+        <Table<OrderedRow>
+          columns={noticeColumns}
+          rows={pageRows}
+          getRowId={(row) => row.id}
+          onRowClick={setSelected}
+          onReorder={handleReorder}
+          reorderDisabled={searching || saving}
+          emptyMessage={<EmptyState variant="search" />}
+        />
+        {filtered.length > 0 && (
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-[var(--ds-text-subtle)]">총 {filtered.length.toLocaleString()}건</span>
+            <Pagination
+              currentPage={page}
+              totalPages={totalPages}
+              onPageChange={setPage}
+              itemsPerPage={pageSize}
+              onItemsPerPageChange={(size) => {
+                setPageSize(size)
+                setPage(1)
+              }}
             />
-          )}
-        </Card>
+          </div>
+        )}
+        <Modal open={!!selected} onClose={() => setSelected(null)} title={selected?.name ?? ''}>
+          <p className="text-sm text-[var(--ds-text)]">{selected?.summary}</p>
+        </Modal>
       </div>
     )
   },
