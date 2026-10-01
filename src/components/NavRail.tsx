@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { clsx } from 'clsx'
 import { ChevronDown } from 'lucide-react'
 import { Collapse } from './Collapse'
@@ -36,6 +36,9 @@ export interface NavRailProps {
   /** 섹션(`NavRailGroup`) 제목을 눌러 섹션을 접고 펼 수 있게 할지. 기본 false — 제목은 단순 라벨이다. */
   collapsibleSections?: boolean
 }
+
+/** 패널 폭 트랜지션 시간(아래 `duration-200`과 맞춰야 한다). */
+const TRANSITION_MS = 200
 
 function isGroup(entry: NavRailEntry): entry is NavRailGroup {
   return 'items' in entry
@@ -135,12 +138,30 @@ function NavRailSection({ group, collapsed, collapsible }: { group: NavRailGroup
  * 항상 같은 위치에 고정된다.
  */
 export function NavRail({ items, collapsed, expandedWidth = 160, collapsedWidth = 64, collapsibleSections = false }: NavRailProps) {
+  // 레이아웃이 차지하는 폭(aside)과 눈에 보이는 패널 폭을 분리한다. aside 폭을 트랜지션하면 옆의 본문
+  // 전체가 매 프레임 다시 배치돼(큰 표/차트가 있는 화면에서 버벅임) — 대신 aside 폭은 한 번만 바꾸고,
+  // 애니메이션은 절대 위치 패널 안에서만 일어나게 한다. 펼칠 때는 aside를 바로 넓혀 자리를 먼저 확보하고,
+  // 접을 때는 패널이 다 줄어든 뒤에 aside를 줄여서 패널이 본문 위로 겹치지 않게 한다.
+  const [layoutCollapsed, setLayoutCollapsed] = useState(collapsed)
+
+  useEffect(() => {
+    if (!collapsed) {
+      setLayoutCollapsed(false)
+      return
+    }
+    const timer = setTimeout(() => setLayoutCollapsed(true), TRANSITION_MS)
+    return () => clearTimeout(timer)
+  }, [collapsed])
+
   return (
     <aside
-      className="flex h-full shrink-0 flex-col bg-[var(--ds-surface-sunken)] transition-[width] duration-200"
-      style={{ width: collapsed ? collapsedWidth : expandedWidth }}
+      className="relative h-full shrink-0 bg-[var(--ds-surface-sunken)]"
+      style={{ width: layoutCollapsed ? collapsedWidth : expandedWidth }}
     >
-      <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-2 py-2">
+      <nav
+        className="absolute inset-y-0 left-0 flex flex-col gap-1 overflow-y-auto overflow-x-hidden px-2 py-2 transition-[width] duration-200"
+        style={{ width: collapsed ? collapsedWidth : expandedWidth }}
+      >
         {items.map((entry) =>
           isGroup(entry) ? (
             <NavRailSection key={entry.key} group={entry} collapsed={collapsed} collapsible={collapsibleSections} />
