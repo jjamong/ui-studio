@@ -1,0 +1,26 @@
+/* 공용 얇은 스크롤바. 값은 갖지 않고 --ds-* 토큰만 참조한다 (소비 프로젝트가 토큰 값을 정의).
+   전역 CSS에서 `@import 'ui-studio/scrollbar.css';` 로 가져다 쓴다. */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--ds-text-subtlest) 45%, transparent);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ds-text-subtlest);
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+/* Firefox: webkit 의사 요소를 모르는 브라우저에만 (Chrome은 scrollbar-width가 있으면 위 스타일을 무시한다) */
+@supports not selector(::-webkit-scrollbar) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--ds-text-subtlest) 45%, transparent) transparent;
+  }
+}

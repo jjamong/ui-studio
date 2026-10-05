@@ -58,3 +58,4 @@ npm run typecheck
 1. [TOKENS.md](./TOKENS.md)의 `--ds-*`, `--text-*` 변수를 자기 테마에 정의.
 2. Tailwind CSS 진입점에 `@source "../node_modules/ui-studio/dist";` 추가 (v4 기준).
 3. `RouteLoadingBar`를 쓴다면 TOKENS.md에 있는 keyframes CSS를 전역 CSS에 추가.
+4. 얇은 공용 스크롤바를 쓰려면 전역 CSS에 `@import 'ui-studio/scrollbar.css';` 추가 (토큰만 참조).

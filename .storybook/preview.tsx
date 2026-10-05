@@ -1,5 +1,6 @@
 import type { Preview } from '@storybook/react-vite'
 import './theme.css'
+import '../src/styles/scrollbar.css'
 
 /**
  * 전역 라이트/다크 테마 토글(툴바). 개별 스토리가 Light/Dark 버전을 따로 만들 필요 없이,
