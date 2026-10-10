@@ -76,6 +76,9 @@ export type { FormActionsProps } from './components/FormActions'
 export { DetailPageLayout } from './components/DetailPageLayout'
 export type { DetailPageLayoutProps } from './components/DetailPageLayout'
 
+export { TreeDetailLayout } from './components/TreeDetailLayout'
+export type { TreeDetailLayoutProps, TreeDetailLayoutTreeWidth } from './components/TreeDetailLayout'
+
 export { SectionSkeleton } from './components/SectionSkeleton'
 export type { SectionSkeletonProps } from './components/SectionSkeleton'
 
